@@ -251,6 +251,9 @@ data class ProjectInfoModel(
     val roleId: String?,
     @Json(name = "start_time")
     val startTime: Int?,
+    val assignments: AssignmentProject,
+    @Json(name = "status")
+    val statuses: List<StatusProject>,
     @Json(name = "poster_data")
     val poster: ProjectPosterInfoModel,
     val aliases: List<String>,

@@ -10,12 +10,17 @@ import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
+import me.naoti.panelapp.state.rememberAppState
 import me.naoti.panelapp.ui.AppScaffold
 import me.naoti.panelapp.ui.ScreenItem
 import me.naoti.panelapp.ui.screens.LoginScreen
+import me.naoti.panelapp.ui.screens.ProjectScreen
 import me.naoti.panelapp.ui.screens.RegisterScreen
 import me.naoti.panelapp.ui.screens.SplashScreen
 import me.naoti.panelapp.ui.theme.NaoTimesTheme
@@ -33,6 +38,7 @@ class MainActivity : ComponentActivity() {
 fun NaoTimesView() {
     val navController = rememberNavController()
     val navMainController = rememberNavController()
+    val appState = rememberAppState(navController = navController, navAppController = navMainController)
 
     NaoTimesTheme {
         Surface(
@@ -41,9 +47,9 @@ fun NaoTimesView() {
                 .fillMaxHeight(),
             color = MaterialTheme.colors.background
         ) {
-            NavHost(navController = navController, startDestination = ScreenItem.SplashScreen.route) {
+            NavHost(navController = appState.navController, startDestination = ScreenItem.SplashScreen.route) {
                 composable(ScreenItem.SplashScreen.route) {
-                    SplashScreen(navController)
+                    SplashScreen(appState)
                 }
                 composable(ScreenItem.LoginScreen.route) {
                     LoginScreen(navController)
@@ -52,7 +58,10 @@ fun NaoTimesView() {
                     RegisterScreen(navController)
                 }
                 composable(ScreenItem.AppScaffold.route) {
-                    AppScaffold(navController = navMainController)
+                    AppScaffold(appState)
+                }
+                composable(ScreenItem.ProjectScreen.route) { stack ->
+                    ProjectScreen(appState, stack.arguments?.getString("projectId"))
                 }
             }
         }

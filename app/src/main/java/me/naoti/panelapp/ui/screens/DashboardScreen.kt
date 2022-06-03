@@ -72,7 +72,7 @@ suspend fun getAPIData(appState: AppState): APIResult {
 }
 
 @Composable
-fun DashboardScreen(appState: AppState) {
+fun DashboardScreen(appState: AppState, paddingValues: PaddingValues? = null) {
     val log = getLogger("DashboardScreenVIew")
     var ongoingProject by rememberSaveable { mutableStateOf<List<Project>>(listOf()) }
     val swipeState = rememberSwipeRefreshState(false)
@@ -137,7 +137,6 @@ fun DashboardScreen(appState: AppState) {
                 start = 20.dp,
                 end = 20.dp,
                 top = 0.dp,
-                bottom = 20.dp
             )
             .verticalScroll(rememberScrollState())
         ) {

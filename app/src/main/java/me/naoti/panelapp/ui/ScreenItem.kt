@@ -6,5 +6,5 @@ sealed class ScreenItem(val route: String) {
     object SplashScreen : ScreenItem("splash_screen")
 
     object AppScaffold : ScreenItem("app_scaffolding")
+    object ProjectScreen : ScreenItem("app_project_screen/{projectId}")
 }
-

@@ -68,6 +68,7 @@ fun DashboardProjectCard(project: Project, appCtx: AppContextState = rememberApp
                 onClick = {
                     // navigate to project view
                     log.i("Navigating to resource project...")
+                    appCtx.navController.navigate("app_project_screen/${project.id}")
                 }
             )
             Spacer(modifier = Modifier.height(6.dp))

@@ -10,21 +10,24 @@ data class AssignmentKeyValueProject(
     val name: String? = null,
 )
 
+val DefaultAssignment = AssignmentKeyValueProject()
+
+@JsonClass(generateAdapter = true)
 data class AssignmentProject(
     @Json(name = "TL")
-    val translator: AssignmentKeyValueProject,
+    val translator: AssignmentKeyValueProject = DefaultAssignment,
     @Json(name = "TLC")
-    val translateChecker: AssignmentKeyValueProject,
+    val translateChecker: AssignmentKeyValueProject = DefaultAssignment,
     @Json(name = "ED")
-    val editor: AssignmentKeyValueProject,
+    val editor: AssignmentKeyValueProject = DefaultAssignment,
     @Json(name = "ENC")
-    val encoder: AssignmentKeyValueProject,
+    val encoder: AssignmentKeyValueProject = DefaultAssignment,
     @Json(name = "TM")
-    val timer: AssignmentKeyValueProject,
+    val timer: AssignmentKeyValueProject = DefaultAssignment,
     @Json(name = "TS")
-    val typesetter: AssignmentKeyValueProject,
+    val typesetter: AssignmentKeyValueProject = DefaultAssignment,
     @Json(name = "QC")
-    val qualityChecker: AssignmentKeyValueProject,
+    val qualityChecker: AssignmentKeyValueProject = DefaultAssignment,
 )
 
 data class StatusTickProject(
