@@ -1,0 +1,66 @@
+package me.naoti.panelapp
+
+import android.os.Bundle
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Surface
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import me.naoti.panelapp.ui.AppScaffold
+import me.naoti.panelapp.ui.ScreenItem
+import me.naoti.panelapp.ui.screens.LoginScreen
+import me.naoti.panelapp.ui.screens.RegisterScreen
+import me.naoti.panelapp.ui.screens.SplashScreen
+import me.naoti.panelapp.ui.theme.NaoTimesTheme
+
+class MainActivity : ComponentActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContent {
+            NaoTimesView()
+        }
+    }
+}
+
+@Composable
+fun NaoTimesView() {
+    val navController = rememberNavController()
+    val navMainController = rememberNavController()
+
+    NaoTimesTheme {
+        Surface(
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight(),
+            color = MaterialTheme.colors.background
+        ) {
+            NavHost(navController = navController, startDestination = ScreenItem.SplashScreen.route) {
+                composable(ScreenItem.SplashScreen.route) {
+                    SplashScreen(navController)
+                }
+                composable(ScreenItem.LoginScreen.route) {
+                    LoginScreen(navController)
+                }
+                composable(ScreenItem.RegisterScreen.route) {
+                    RegisterScreen(navController)
+                }
+                composable(ScreenItem.AppScaffold.route) {
+                    AppScaffold(navController = navMainController)
+                }
+            }
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun NaoTimesViewPreview() {
+    NaoTimesView()
+}
