@@ -62,6 +62,49 @@ enum class ErrorCode(val actual: Int, val alias: Int? = null, val customMsg: Str
         override fun asText(extra: String) = "Server $extra already registered!"
     },
 
+    ProjectAlreadyRegistered(4200) {
+        override fun asText() = "Project already registered!"
+        override fun asText(extra: String) = "Project $extra already registered!"
+    },
+    AnilistFailure(4201) {
+        override fun asText() = "Failed to get info from Anilist!"
+        override fun asText(extra: String) = "Failed to get $extra info from Anilist!"
+    },
+    ProjectStartTimeNotSure(4203) {
+        override fun asText() = "Failed to add because of undetermined start time!"
+        override fun asText(extra: String) = "Failed to add $extra because of undetermined start time!"
+    },
+    ProjectRoleFailed(4204) {
+        override fun asText() = "Failed to create role!"
+        override fun asText(extra: String) = "Failed to create role for $extra!"
+    },
+    MissingEpisodeAdd(4300) {
+        override fun asText() = "There is no episode to be added!"
+        override fun asText(extra: String) = "There is no episode to be added!"
+    },
+    ProjectNotFound(4301) {
+        override fun asText() = "Project not found!"
+        override fun asText(extra: String) = "Project $extra not found!"
+    },
+    MissingEpisodeRemove(4300) {
+        override fun asText() = "There is no episode to be removed!"
+        override fun asText(extra: String) = "There is no episode to be removed!"
+    },
+    ProjectListIsEmpty(4303) {
+        override fun asText() = "Project list is empty!"
+        override fun asText(extra: String) = "Project list is empty!"
+    },
+
+    DatabaseUpdateFailed(4500) {
+        override fun asText() = "Failed to update main database!"
+        override fun asText(extra: String) = "Failed to update main database!"
+    },
+    ProjectRemoveFailed(4501) {
+        override fun asText() = "Failed to remove project from main database!"
+        override fun asText(extra: String) = "Failed to remove $extra from main database!"
+    },
+
+
     // Other
     UnknownError(5999) {
         override fun asText(): String {
@@ -83,7 +126,7 @@ enum class ErrorCode(val actual: Int, val alias: Int? = null, val customMsg: Str
 
     companion object {
         fun get(code: Int): ErrorCode? {
-            return ErrorCode.values().firstOrNull {
+            return values().firstOrNull {
                 it.actual == code || it.alias == code
             }
         }

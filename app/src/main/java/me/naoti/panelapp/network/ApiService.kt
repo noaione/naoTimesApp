@@ -36,19 +36,23 @@ interface ApiRoutes {
 
     // Project related
     @GET("showtimes/proyek")
-    suspend fun getProjects(): ProjectListModel
+    suspend fun getProjects(): NetworkResponse<ErrorModelWithData<List<ProjectListModel>>, ErrorModel>
     @GET("showtimes/proyek/{id}")
     suspend fun getProject(@Path("id") id: String): NetworkResponse<ErrorModelWithData<ProjectInfoModel>, ErrorModelWithData<ProjectInfoModel>>
     @POST("showtimes/proyek/tambah")
-    suspend fun addProject(@Body project: ProjectAddModel): ErrorModel
+    suspend fun addProject(@Body project: ProjectAddModel): NetworkResponse<ErrorModel, ErrorModel>
     @DELETE("showtimes/proyek/nuke")
-    suspend fun removeProject(@Body project: ProjectRemoveModel): ErrorModel
+    suspend fun removeProject(@Body project: ProjectRemoveModel): NetworkResponse<ErrorModel, ErrorModel>
     @POST("showtimes/proyek/ubah")
-    suspend fun updateProject(@Body project: ProjectAdjustModel): ErrorModel
+    suspend fun updateProjectStatus(@Body project: ProjectAdjustStatusModel): NetworkResponse<ProjectAdjustStatusResponse, ProjectAdjustStatusResponse>
+    @POST("showtimes/proyek/ubah")
+    suspend fun updateProjectStaff(@Body project: ProjectAdjustStaffModel): NetworkResponse<ProjectAdjustStaffResponse, ProjectAdjustStaffResponse>
     @POST("showtimes/proyek/episode")
-    suspend fun updateProjectEpisode(@Body episodes: ProjectEpisodeAdjustModel): ErrorModel
+    suspend fun removeProjectEpisode(@Body episodes: ProjectEpisodeRemoveModel): NetworkResponse<ErrorModelWithData<List<ProjectEpisodeRemovedResponse>>, ErrorModel>
+    @POST("showtimes/proyek/episode")
+    suspend fun addProjectEpisode(@Body episodes: ProjectEpisodeAddModel): NetworkResponse<ErrorModelWithData<List<StatusProject>>, ErrorModel>
     @POST("anilist/find")
-    suspend fun findAnime(@Query("q") query: String): AnimeFindModel
+    suspend fun findAnime(@Query("q") query: String): NetworkResponse<AnimeFindModel, AnimeFindModel>
 
     // Settings related
     @GET("showtimes/settings")
