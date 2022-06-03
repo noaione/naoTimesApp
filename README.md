@@ -6,12 +6,13 @@ This utilize the published API located in [naoTimesUI](https://panel.naoti.me)
 ## Requirements
 - JDK 11+
 - Android 6.0+
+- Kotlin
   
 ## Libraries Used
 - [Jetpack Compose](https://developer.android.com/jetpack/compose) `Framework`
 - [Material Design](https://developer.android.com/jetpack/androidx/releases/compose-material) `UI Kit`
 - [Coil](https://coil-kt.github.io/coil/) `Image Loader`
-- [Retrofit](https://square.github.io/retrofit/) `HTTP Handler`
+- [Retrofit](https://square.github.io/retrofit/) `HTTP Client`
   - [NetworkResponseAdapter](https://haroldadmin.github.io/NetworkResponseAdapter/) `Interceptor for response by Retrofit`
   - [OkHttp3 Logging Interceptor](https://github.com/square/okhttp/tree/master/okhttp-logging-interceptor) `Network logging`
 - [Moshi](https://github.com/square/moshi) `JSON Parser`
