@@ -19,6 +19,7 @@ import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.google.accompanist.flowlayout.FlowRow
+import me.naoti.panelapp.builder.CoilImage
 import me.naoti.panelapp.network.models.*
 import me.naoti.panelapp.state.AppContextState
 import me.naoti.panelapp.state.rememberAppContextState
@@ -43,16 +44,14 @@ fun DashboardProjectCard(project: Project, appCtx: AppContextState = rememberApp
         elevation = 5.dp
     ) {
         Column {
-            AsyncImage(
-                model = ImageRequest.Builder(appCtx.contextState)
-                    .data(project.poster)
-                    .crossfade(true)
-                    .build(),
-                contentScale = ContentScale.Crop,
+            CoilImage(
+                url = project.poster,
+                contentDescription = "Project Image",
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(80.dp),
-                contentDescription = "Project Image"
+                contentScale = ContentScale.Crop,
+                context = appCtx.contextState
             )
             Spacer(modifier = Modifier.height(6.dp))
             ClickableText(
