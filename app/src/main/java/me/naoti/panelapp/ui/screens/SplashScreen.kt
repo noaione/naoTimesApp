@@ -1,21 +1,28 @@
 package me.naoti.panelapp.ui.screens
 
 import android.view.animation.OvershootInterpolator
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import me.naoti.panelapp.R
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.remember
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
+import coil.compose.rememberAsyncImagePainter
 import com.haroldadmin.cnradapter.NetworkResponse
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import me.naoti.panelapp.state.AppState
 import me.naoti.panelapp.state.rememberAppState
@@ -24,24 +31,17 @@ import me.naoti.panelapp.utils.getLogger
 
 @Composable
 fun SplashScreen(appState: AppState) {
-    val scale = remember {
-        androidx.compose.animation.core.Animatable(0f)
-    }
     val log = getLogger("SplashScreenActivity")
+    var expanded by remember {
+        mutableStateOf(false)
+    }
     
     LaunchedEffect(key1 = true) {
-        scale.animateTo(
-            targetValue = 0.7f,
-            animationSpec = tween(
-                durationMillis = 800,
-                easing = {
-                    OvershootInterpolator(4f).getInterpolation(it)
-                }
-            )
-        )
-
         // check authentication
         appState.coroutineScope.launch {
+            delay(500L)
+            expanded = true
+            delay(1000L)
             if (appState.getCurrentUser() != null) {
                 log.i("There is existing user in shared prefs, using it...")
                 appState.navController.navigate(ScreenItem.AppScaffold.route) {
@@ -88,13 +88,27 @@ fun SplashScreen(appState: AppState) {
         }
     }
     
-    Column(modifier = Modifier
-        .fillMaxSize()
-        .background(Color(17, 24, 39, 1))
-        .wrapContentSize(Alignment.Center)) {
-            Image(
-                painter = painterResource(id = R.drawable.ic_launcher_foreground),
-                contentDescription = "Logo",
-                modifier = Modifier.scale(scale.value))
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color(17, 24, 39, 1))
+            .wrapContentSize(Alignment.Center),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Image(
+            painter = painterResource(id = R.drawable.naotimes_logo),
+            contentDescription = "Logo",
+            modifier = Modifier
+                .height(120.dp)
+                .fillMaxHeight()
+                .clip(RoundedCornerShape(50))
+        )
+        AnimatedVisibility(visible = expanded) {
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                "naoTimes",
+                style = MaterialTheme.typography.h4
+            )
+        }
     }
 }
