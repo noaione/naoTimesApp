@@ -26,30 +26,39 @@ import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.haroldadmin.cnradapter.NetworkResponse
 import kotlinx.coroutines.launch
+import me.naoti.panelapp.network.models.DefaultEmptyProject
 import me.naoti.panelapp.network.models.ProjectInfoModel
 import me.naoti.panelapp.state.AppState
 import me.naoti.panelapp.ui.components.ProjectCardInfo
-import me.naoti.panelapp.ui.theme.Gray100
-import me.naoti.panelapp.ui.theme.Gray200
-import me.naoti.panelapp.ui.theme.Gray600
-import me.naoti.panelapp.ui.theme.Gray700
+import me.naoti.panelapp.ui.theme.*
 import me.naoti.panelapp.utils.getLogger
 
 suspend fun getProjectInformation(projectId: String, appState: AppState): ProjectInfoModel? {
-    val log = getLogger("ProjectInfoFetch")
+    val log = getLogger("ProjectInfoFetch[$projectId]")
     var projectInfo: ProjectInfoModel? = null
-    when (val state = appState.apiState.getProject(projectId)) {
-        is NetworkResponse.Success -> {
-            projectInfo = state.body.data!!
-            log.i("Success fetching ongoing projects...")
-            log.d(state.body.data!!)
+
+    val result = appState.getProjectCache(projectId) {
+        log.i("Cache empty, fetching to database")
+        when (val state = appState.apiState.getProject(projectId)) {
+            is NetworkResponse.Success -> {
+                log.i("Success fetching ongoing projects...")
+                log.d(state.body.data!!)
+                state.body.data ?: DefaultEmptyProject
+            }
+            is NetworkResponse.Error -> {
+                state.error?.let { log.e(it.stackTraceToString()) }
+                Toast.makeText(
+                    appState.contextState, "Failed to get project info!", Toast.LENGTH_SHORT
+                ).show()
+                DefaultEmptyProject
+            }
         }
-        is NetworkResponse.Error -> {
-            state.error?.let { log.e(it.stackTraceToString()) }
-            Toast.makeText(
-                appState.contextState, "Failed to get project info!", Toast.LENGTH_SHORT
-            ).show()
-        }
+    }
+    if (result == DefaultEmptyProject) {
+        log.e("Got default empty, evicting cache and returning null!")
+        appState.evictCacheProject(projectId)
+    } else {
+        projectInfo = result
     }
     return projectInfo
 }
@@ -84,7 +93,10 @@ fun ProjectScreen(appState: AppState, projectId: String?) {
     Scaffold(
         scaffoldState = appState.scaffoldState,
         topBar = {
-            TopAppBar {
+            TopAppBar(
+                backgroundColor = if (appState.isDarkMode()) Gray900 else Gray200,
+                contentColor = if (appState.isDarkMode()) White else Gray800
+            ) {
                 Icon(
                     Icons.Filled.ArrowBack, contentDescription = "Go back",
                     modifier = Modifier
@@ -98,7 +110,7 @@ fun ProjectScreen(appState: AppState, projectId: String?) {
                 Text(text = if (projectInfo == null) "..." else projectInfo!!.title)
             }
         },
-    ) { scafPad ->
+    ) { paddingVal ->
         SwipeRefresh(
             state = swipeState,
             onRefresh = {
@@ -112,8 +124,8 @@ fun ProjectScreen(appState: AppState, projectId: String?) {
                 }
             },
             Modifier.padding(
-                top = scafPad.calculateTopPadding(),
-                bottom = scafPad.calculateBottomPadding()
+                top = paddingVal.calculateTopPadding(),
+                bottom = paddingVal.calculateBottomPadding()
             )
         ) {
             Column(

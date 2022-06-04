@@ -2,7 +2,6 @@ package me.naoti.panelapp.state
 
 import android.content.Context
 import android.content.res.Configuration
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.ScaffoldState
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
@@ -11,14 +10,14 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.squareup.moshi.Moshi
-import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import kotlinx.coroutines.CoroutineScope
 import me.naoti.panelapp.R
 import me.naoti.panelapp.builder.getMoshi
 import me.naoti.panelapp.network.ApiRoutes
-import me.naoti.panelapp.network.ApiService
 import me.naoti.panelapp.network.models.UserInfoModel
+import io.github.reactivecircus.cache4k.Cache
+import me.naoti.panelapp.network.models.ProjectInfoModel
+import kotlin.time.Duration.Companion.minutes
 
 open class AppContextState (
     val scaffoldState: ScaffoldState,
@@ -27,12 +26,29 @@ open class AppContextState (
     val navController: NavHostController,
 ) {
     private var isAppBar = false
+    private val projectCache = Cache.Builder()
+        .expireAfterWrite(3.minutes)
+        .build<String, ProjectInfoModel>()
 
     var shouldShowAppbar: Boolean
         get() = isAppBar
         set(shouldShow: Boolean) {
             isAppBar = shouldShow
         }
+
+    suspend fun getProjectCache(projectId: String, loader: suspend () -> ProjectInfoModel): ProjectInfoModel {
+        return projectCache.get(projectId, loader)
+    }
+
+    fun setProjectCache(project: ProjectInfoModel) {
+        projectCache.put(project.id, project)
+    }
+
+    fun evictCacheProject(projectId: String) {
+        try {
+            projectCache.invalidate(projectId)
+        } catch (e: Throwable) { /* Ignore */ }
+    }
 
     fun isDarkMode(): Boolean {
         val forceDark = contextState
