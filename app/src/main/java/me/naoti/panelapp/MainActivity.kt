@@ -8,35 +8,34 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.navigation.NavHostController
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import me.naoti.panelapp.state.AppState
 import me.naoti.panelapp.state.rememberAppState
 import me.naoti.panelapp.ui.AppScaffold
 import me.naoti.panelapp.ui.ScreenItem
 import me.naoti.panelapp.ui.screens.*
-import me.naoti.panelapp.ui.theme.NaoTimesTheme
+import me.naoti.panelapp.ui.theme.*
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            NaoTimesView()
+            val navController = rememberNavController()
+            val navMainController = rememberNavController()
+            val appState = rememberAppState(navController = navController, navAppController = navMainController)
+            NaoTimesView(appState)
         }
     }
 }
 
 @Composable
-fun NaoTimesView() {
-    val navController = rememberNavController()
-    val navMainController = rememberNavController()
-    val appState = rememberAppState(navController = navController, navAppController = navMainController)
-
+fun NaoTimesView(appState: AppState) {
     NaoTimesTheme {
         Surface(
             modifier = Modifier
@@ -49,10 +48,10 @@ fun NaoTimesView() {
                     SplashScreen(appState)
                 }
                 composable(ScreenItem.LoginScreen.route) {
-                    LoginScreen(navController)
+                    LoginScreen(appState.navController)
                 }
                 composable(ScreenItem.RegisterScreen.route) {
-                    RegisterScreen(navController)
+                    RegisterScreen(appState.navController)
                 }
                 composable(ScreenItem.AppScaffold.route) {
                     AppScaffold(appState)
@@ -71,5 +70,5 @@ fun NaoTimesView() {
 @Preview(showBackground = true)
 @Composable
 fun NaoTimesViewPreview() {
-    NaoTimesView()
+    NaoTimesView(rememberAppState())
 }

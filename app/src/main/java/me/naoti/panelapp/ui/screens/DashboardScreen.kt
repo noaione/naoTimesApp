@@ -8,6 +8,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Icon
+import androidx.compose.material.LinearProgressIndicator
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Done
@@ -79,28 +80,43 @@ fun DashboardScreen(appState: AppState, paddingValues: PaddingValues? = null) {
     var isInitialized by rememberSaveable { mutableStateOf(false) }
     var ongoingCount by rememberSaveable { mutableStateOf(-1) }
     var finishedCount by rememberSaveable { mutableStateOf(-1) }
+    var loadingState by rememberSaveable { mutableStateOf(true) }
 
     LaunchedEffect(key1 = true) {
         if (!isInitialized) {
             appState.coroutineScope.launch {
-                log.i("Initializing data...")
-                val apiRes = getAPIData(appState)
-                ongoingProject = apiRes.ongoingProjects
-                apiRes.dashboardInfo?.let { it ->
-                    it.forEach { v ->
-                        if (v.key == "ongoing") {
-                            ongoingCount = v.data
-                        } else if (v.key == "done") {
-                            finishedCount = v.data
+                if (!isInitialized) {
+                    loadingState = true
+                    log.i("Initializing data...")
+                    val apiRes = getAPIData(appState)
+                    ongoingProject = apiRes.ongoingProjects
+                    apiRes.dashboardInfo?.let { it ->
+                        it.forEach { v ->
+                            if (v.key == "ongoing") {
+                                ongoingCount = v.data
+                            } else if (v.key == "done") {
+                                finishedCount = v.data
+                            }
                         }
                     }
+                    log.i("Data initialized!")
+                    isInitialized = true
                 }
-                log.i("Data initialized!")
-                isInitialized = true
+                loadingState = false
             }
         }
     }
 
+
+    if (loadingState) {
+        LinearProgressIndicator(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(4.dp)
+        )
+    } else {
+        Spacer(modifier = Modifier.height(4.dp))
+    }
     SwipeRefresh(
         state = swipeState,
         onRefresh = {
@@ -110,6 +126,7 @@ fun DashboardScreen(appState: AppState, paddingValues: PaddingValues? = null) {
                 val rememberOldTwo = finishedCount
                 ongoingCount = -1
                 finishedCount = -1
+                loadingState = true
                 val apiRes = getAPIData(appState)
                 ongoingProject = apiRes.ongoingProjects
                 if (apiRes.dashboardInfo != null) {
@@ -128,6 +145,7 @@ fun DashboardScreen(appState: AppState, paddingValues: PaddingValues? = null) {
                     finishedCount = rememberOldTwo
                 }
                 log.i("State refreshed!")
+                loadingState = false
             }
         }
     ) {

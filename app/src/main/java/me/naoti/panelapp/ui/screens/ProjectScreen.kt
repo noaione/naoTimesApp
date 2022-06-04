@@ -24,6 +24,7 @@ import com.google.accompanist.placeholder.placeholder
 import com.google.accompanist.placeholder.shimmer
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.haroldadmin.cnradapter.NetworkResponse
 import kotlinx.coroutines.launch
 import me.naoti.panelapp.network.models.DefaultEmptyProject
@@ -88,6 +89,15 @@ fun ProjectScreen(appState: AppState, projectId: String?) {
             projectInfo = getProjectInformation(projectId, appState)
             isInit = true
         }
+    }
+
+    val systemUiController = rememberSystemUiController()
+    val isDarkMode = appState.isDarkMode()
+    SideEffect {
+        systemUiController.setStatusBarColor(
+            color = if (isDarkMode) Gray900 else Gray200,
+            darkIcons = !isDarkMode
+        )
     }
 
     Scaffold(

@@ -6,8 +6,10 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import me.naoti.panelapp.state.AppState
 import me.naoti.panelapp.ui.theme.Gray200
 import me.naoti.panelapp.ui.theme.Gray800
@@ -18,6 +20,15 @@ import me.naoti.panelapp.utils.getLogger
 @Composable
 fun ProjectAddScreen(appState: AppState) {
     val log = getLogger("ProjectAddView")
+
+    val systemUiController = rememberSystemUiController()
+    val isDarkMode = appState.isDarkMode()
+    SideEffect {
+        systemUiController.setStatusBarColor(
+            color = if (isDarkMode) Gray900 else Gray200,
+            darkIcons = !isDarkMode
+        )
+    }
 
     Scaffold(
         scaffoldState = appState.scaffoldState,

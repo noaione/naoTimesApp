@@ -20,6 +20,7 @@ This utilize the published API located in [naoTimesUI](https://panel.naoti.me)
   - [Flow Layout](https://google.github.io/accompanist/flowlayout/)
   - [Placeholder](https://google.github.io/accompanist/placeholder/)
   - [Swipe Refresh](https://google.github.io/accompanist/swiperefresh/)
+  - [System UI Controller](https://google.github.io/accompanist/systemuicontroller/)
 - [cache4k](https://github.com/ReactiveCircus/cache4k) `In-memory Cache`
 
 ## License

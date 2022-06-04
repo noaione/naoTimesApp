@@ -8,6 +8,7 @@ import androidx.compose.material.Button
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.AnnotatedString
@@ -33,11 +34,10 @@ import me.naoti.panelapp.utils.getLogger
 fun LoginScreen(navController: NavController) {
     val context = rememberAppState(navController = navController as NavHostController)
     val log = getLogger("LoginScreenActivity")
-    var allowMutate by remember { mutableStateOf(true) }
-    val username = remember {
-        mutableStateOf(TextFieldValue())
-    }
-    val (errorMessage, setErrorMessage) = remember {
+    var allowMutate by rememberSaveable { mutableStateOf(true) }
+    var usernameData by rememberSaveable { mutableStateOf("") }
+    var passwordData by rememberSaveable { mutableStateOf("") }
+    val (errorMessage, setErrorMessage) = rememberSaveable {
         mutableStateOf<String?>(null)
     }
 
@@ -46,25 +46,22 @@ fun LoginScreen(navController: NavController) {
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        val password = remember {
-            mutableStateOf(TextFieldValue())
-        }
 
         Text(text = "Login", style = TextStyle(fontSize = 24.sp))
         Spacer(modifier = Modifier.height(20.dp))
         OutlinedTextField(
             label = { Text(text = "Server ID") },
-            value = username.value,
-            onValueChange = { username.value = it },
+            value = TextFieldValue(usernameData),
+            onValueChange = { usernameData = it.text },
             enabled = allowMutate,
         )
         Spacer(modifier = Modifier.height(20.dp))
         OutlinedTextField(
             label = { Text(text = "Password") },
-            value = password.value,
+            value = TextFieldValue(passwordData),
             visualTransformation = PasswordVisualTransformation(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-            onValueChange = { password.value = it },
+            onValueChange = { passwordData = it.text },
             enabled = allowMutate,
         )
         
@@ -76,8 +73,8 @@ fun LoginScreen(navController: NavController) {
                     context.coroutineScope.launch {
                         allowMutate = false
                         setErrorMessage(null)
-                        log.i("Logging in with ${username.value.text}")
-                        when (val loginState = context.apiState.loginUser(LoginModel(username.value.text, password.value.text))) {
+                        log.i("Logging in with ${usernameData}")
+                        when (val loginState = context.apiState.loginUser(LoginModel(usernameData, passwordData))) {
                             is NetworkResponse.Success -> {
                                 val result = loginState.body
                                 if (result.loggedIn) {
@@ -107,7 +104,7 @@ fun LoginScreen(navController: NavController) {
                                     context.setCurrentUser(null)
                                     // show snack bar
                                     val theText = when (result.code) {
-                                        ErrorCode.UnknownServerID -> result.code.asText(username.value.text)
+                                        ErrorCode.UnknownServerID -> result.code.asText(usernameData)
                                         else -> result.code.asText()
                                     }
                                     setErrorMessage(theText)
@@ -119,7 +116,7 @@ fun LoginScreen(navController: NavController) {
                                 var theText = loginState.error.toString()
                                 if (body != null) {
                                     theText = when (body.code) {
-                                        ErrorCode.UnknownServerID -> body.code.asText(username.value.text)
+                                        ErrorCode.UnknownServerID -> body.code.asText(usernameData)
                                         else -> body.code.asText()
                                     }
                                 }
