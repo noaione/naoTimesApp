@@ -19,32 +19,40 @@ import me.naoti.panelapp.ui.theme.*
 enum class StatusRole {
     TL {
         override fun getShort() = "TL"
+        override fun getFull() = "Translator"
     },
     TLC {
         override fun getShort() = "TLC"
+        override fun getFull() = "Translation Checker"
     },
     ED {
         override fun getShort() = "Edit"
+        override fun getFull() = "Editor"
     },
     ENC {
         override fun getShort() = "Encode"
+        override fun getFull() = "Encoder"
     },
     TM {
         override fun getShort() = "Timing"
+        override fun getFull() = "Timer"
     },
     TS {
         override fun getShort() = "TS"
+        override fun getFull() = "Typesetter"
     },
     QC {
         override fun getShort() = "QC"
+        override fun getFull() = "Quality Checker"
     };
 
     abstract fun getShort(): String;
+    abstract fun getFull(): String
 }
 
 data class ColorBox(val bg: Color, val text: Color, val border: Color)
 
-internal fun getColor(type: StatusRole): ColorBox {
+fun getStatusColor(type: StatusRole): ColorBox {
     return when (type) {
         StatusRole.TL -> ColorBox(Red100, Red800, Red200)
         StatusRole.TLC -> ColorBox(Yellow100, Yellow800, Yellow300)
@@ -58,7 +66,7 @@ internal fun getColor(type: StatusRole): ColorBox {
 
 @Composable
 fun StatusBox(type: StatusRole, paddingH: Dp = 4.dp, paddingV: Dp = 0.dp) {
-    val colors = getColor(type)
+    val colors = getStatusColor(type)
     val corner = RoundedCornerShape(4.dp)
 
     Column(

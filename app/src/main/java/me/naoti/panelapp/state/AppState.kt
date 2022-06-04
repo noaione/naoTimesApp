@@ -124,7 +124,7 @@ fun rememberAppState(
     coroutineScope: CoroutineScope = rememberCoroutineScope(),
     navController: NavHostController = rememberNavController(),
     navAppController: NavHostController = rememberNavController(),
-    apiState: ApiRoutes = ApiService.getService(LocalContext.current.applicationContext),
+    apiState: ApiRoutes = rememberApiState(),
 ) = remember(scaffoldState, contextState, coroutineScope, navController, navAppController, apiState) {
     AppState(scaffoldState, contextState, coroutineScope, navController, navAppController, apiState)
 }

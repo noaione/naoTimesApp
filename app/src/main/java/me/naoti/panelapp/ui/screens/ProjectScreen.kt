@@ -87,10 +87,12 @@ fun ProjectScreen(appState: AppState, projectId: String?) {
             TopAppBar {
                 Icon(
                     Icons.Filled.ArrowBack, contentDescription = "Go back",
-                    modifier = Modifier.padding(4.dp).clickable {
-                        // go back
-                        appState.navController.popBackStack()
-                    }
+                    modifier = Modifier
+                        .padding(4.dp)
+                        .clickable {
+                            // go back
+                            appState.navController.popBackStack()
+                        }
                 )
                 Spacer(modifier = Modifier.width(2.dp))
                 Text(text = if (projectInfo == null) "..." else projectInfo!!.title)
@@ -104,6 +106,8 @@ fun ProjectScreen(appState: AppState, projectId: String?) {
                     val newProject = getProjectInformation(projectId, appState)
                     if (newProject != null) {
                         projectInfo = newProject
+                    } else {
+                        Toast.makeText(appState.contextState, "Failed to update!", Toast.LENGTH_SHORT).show()
                     }
                 }
             },
@@ -128,7 +132,10 @@ fun ProjectScreen(appState: AppState, projectId: String?) {
                         color = if (appState.isDarkMode()) Gray700 else Gray100
                     )
             ) {
-                projectInfo?.let { project -> ProjectCardInfo(project, appState) }
+                projectInfo?.let { project -> 
+                    Spacer(modifier = Modifier.height(4.dp))
+                    ProjectCardInfo(project, appState)
+                }
             }
         }
     }
