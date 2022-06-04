@@ -45,7 +45,9 @@ fun SplashScreen(appState: AppState) {
             if (appState.getCurrentUser() != null) {
                 log.i("There is existing user in shared prefs, using it...")
                 appState.navController.navigate(ScreenItem.AppScaffold.route) {
-                    popUpTo(appState.navController.graph.startDestinationId)
+                    popUpTo(ScreenItem.SplashScreen.route) {
+                        inclusive = true
+                    }
                     launchSingleTop = true
                 }
             } else {
@@ -55,14 +57,18 @@ fun SplashScreen(appState: AppState) {
                             log.i("Navigating to: ${ScreenItem.AppScaffold.route}")
                             appState.setCurrentUser(userInfo.body)
                             appState.navController.navigate(ScreenItem.AppScaffold.route) {
-                                popUpTo(appState.navController.graph.startDestinationId)
+                                popUpTo(ScreenItem.SplashScreen.route) {
+                                    inclusive = true
+                                }
                                 launchSingleTop = true
                             }
                         } else {
                             appState.setCurrentUser(null)
                             log.i("Navigating to: ${ScreenItem.LoginScreen.route}")
                             appState.navController.navigate(ScreenItem.LoginScreen.route) {
-                                popUpTo(appState.navController.graph.startDestinationId)
+                                popUpTo(ScreenItem.SplashScreen.route) {
+                                    inclusive = true
+                                }
                                 launchSingleTop = true
                             }
                         }
@@ -71,7 +77,9 @@ fun SplashScreen(appState: AppState) {
                         appState.setCurrentUser(null)
                         log.i("Navigation to ${ScreenItem.LoginScreen.route}")
                         appState.navController.navigate(ScreenItem.LoginScreen.route) {
-                            popUpTo(appState.navController.graph.startDestinationId)
+                            popUpTo(ScreenItem.SplashScreen.route) {
+                                inclusive = true
+                            }
                             launchSingleTop = true
                         }
                     }
