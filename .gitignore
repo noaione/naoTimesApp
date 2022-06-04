@@ -19,3 +19,4 @@ local.properties
 
 hs_*.log
 replay_*.log
+/app/release
