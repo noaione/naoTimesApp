@@ -17,6 +17,10 @@ This utilize the published API located in [naoTimesUI](https://panel.naoti.me)
   - [OkHttp3 Logging Interceptor](https://github.com/square/okhttp/tree/master/okhttp-logging-interceptor) `Network logging`
 - [Moshi](https://github.com/square/moshi) `JSON Parser`
 - [Accompanist](https://google.github.io/accompanist/) `Utility for Jetpack Compose`
+  - [Flow Layout](https://google.github.io/accompanist/flowlayout/)
+  - [Placeholder](https://google.github.io/accompanist/placeholder/)
+  - [Swipe Refresh](https://google.github.io/accompanist/swiperefresh/)
+- [cache4k](https://github.com/ReactiveCircus/cache4k) `In-memory Cache`
 
 ## License
 This project is licensed with [MIT License](LICENSE).
