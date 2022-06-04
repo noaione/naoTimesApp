@@ -23,6 +23,7 @@ import me.naoti.panelapp.builder.CoilImage
 import me.naoti.panelapp.network.models.*
 import me.naoti.panelapp.state.AppContextState
 import me.naoti.panelapp.state.rememberAppContextState
+import me.naoti.panelapp.ui.ScreenItem
 import me.naoti.panelapp.ui.theme.Gray100
 import me.naoti.panelapp.ui.theme.Gray300
 import me.naoti.panelapp.ui.theme.Gray700
@@ -68,7 +69,8 @@ fun DashboardProjectCard(project: Project, appCtx: AppContextState = rememberApp
                 onClick = {
                     // navigate to project view
                     log.i("Navigating to resource project...")
-                    appCtx.navController.navigate("app_project_screen/${project.id}")
+                    val navRoute = ScreenItem.ProjectScreen.route.replace("{projectId}", project.id)
+                    appCtx.navController.navigate(navRoute)
                 }
             )
             Spacer(modifier = Modifier.height(6.dp))

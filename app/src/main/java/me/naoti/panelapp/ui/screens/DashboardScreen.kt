@@ -251,18 +251,15 @@ fun DashboardScreen(appState: AppState, paddingValues: PaddingValues? = null) {
             )
             Spacer(modifier = Modifier.height(8.dp))
 
-            Column {
+            Column(
+                Modifier.padding(
+                    bottom = 8.dp
+                )
+            ) {
                 ongoingProject.forEach { project ->
                     DashboardProjectCard(project = project, appCtx = appState)
                 }
             }
-
-            var bottomPad = 0.dp
-            if (ongoingProject.count() > 0) {
-                bottomPad = 80.dp
-            }
-
-            Spacer(modifier = Modifier.height(bottomPad))
         }
     }
 }
