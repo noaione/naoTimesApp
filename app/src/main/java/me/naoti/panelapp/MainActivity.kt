@@ -19,10 +19,7 @@ import androidx.navigation.navArgument
 import me.naoti.panelapp.state.rememberAppState
 import me.naoti.panelapp.ui.AppScaffold
 import me.naoti.panelapp.ui.ScreenItem
-import me.naoti.panelapp.ui.screens.LoginScreen
-import me.naoti.panelapp.ui.screens.ProjectScreen
-import me.naoti.panelapp.ui.screens.RegisterScreen
-import me.naoti.panelapp.ui.screens.SplashScreen
+import me.naoti.panelapp.ui.screens.*
 import me.naoti.panelapp.ui.theme.NaoTimesTheme
 
 class MainActivity : ComponentActivity() {
@@ -62,6 +59,9 @@ fun NaoTimesView() {
                 }
                 composable(ScreenItem.ProjectScreen.route) { stack ->
                     ProjectScreen(appState, stack.arguments?.getString("projectId"))
+                }
+                composable(ScreenItem.ProjectAddScreen.route) {
+                    ProjectAddScreen(appState)
                 }
             }
         }

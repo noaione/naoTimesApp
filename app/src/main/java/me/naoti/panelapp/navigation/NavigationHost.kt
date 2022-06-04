@@ -1,7 +1,9 @@
 package me.naoti.panelapp.navigation
 
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import me.naoti.panelapp.state.AppState
@@ -12,7 +14,11 @@ import me.naoti.panelapp.utils.getLogger
 fun NavigationHost(appState: AppState, paddingValues: PaddingValues) {
     val log = getLogger("NavigationMain")
     log.i("Creating navigation host")
-    NavHost(navController = appState.navAppController, startDestination = NavigationItem.Dashboard.route) {
+    NavHost(
+        navController = appState.navAppController,
+        startDestination = NavigationItem.Dashboard.route,
+        Modifier.padding(paddingValues)
+    ) {
         // Main screen
         composable(NavigationItem.Dashboard.route) {
             log.i("Entering route: ${NavigationItem.Dashboard.route}")

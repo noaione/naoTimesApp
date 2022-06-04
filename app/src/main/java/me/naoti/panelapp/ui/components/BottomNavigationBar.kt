@@ -1,18 +1,18 @@
 package me.naoti.panelapp.ui.components
 
+import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import me.naoti.panelapp.ui.theme.Purple700
 import me.naoti.panelapp.navigation.NavigationItem
 import me.naoti.panelapp.state.rememberAppContextState
+import me.naoti.panelapp.ui.theme.*
 
 
 @Composable
@@ -24,8 +24,8 @@ fun BottomNavigationBar(navController: NavController) {
         NavigationItem.Settings
     )
     BottomNavigation(
-        backgroundColor = MaterialTheme.colors.primary,
-        contentColor = if (appCtx.isDarkMode()) Color.White else Color.White
+        backgroundColor = if (appCtx.isDarkMode()) Gray900 else Gray200,
+        contentColor = if (appCtx.isDarkMode()) White else Gray800
     ) {
         val navBackStackEntry by navController.currentBackStackEntryAsState()
         val currentRoute = navBackStackEntry?.destination?.route
@@ -33,8 +33,8 @@ fun BottomNavigationBar(navController: NavController) {
             BottomNavigationItem(
                 icon = { Icon(painterResource(id = item.icon), contentDescription = item.title) },
                 label = { Text(text = item.title) },
-                selectedContentColor = Color.White,
-                unselectedContentColor = Color.White.copy(0.4f),
+                selectedContentColor = if (appCtx.isDarkMode()) Gray100 else Gray900,
+                unselectedContentColor = (if (appCtx.isDarkMode()) Gray100 else Gray900).copy(0.4f),
                 alwaysShowLabel = true,
                 selected = currentRoute == item.route,
                 onClick = {
@@ -63,5 +63,16 @@ fun BottomNavigationBar(navController: NavController) {
 @Composable
 fun BottomNavigationBarPreview() {
     val navController = rememberNavController()
-    BottomNavigationBar(navController)
+    NaoTimesTheme {
+        BottomNavigationBar(navController)
+    }
+}
+
+@Preview(showBackground = true, uiMode = UI_MODE_NIGHT_YES)
+@Composable
+fun BottomNavigationBarDarkPreview() {
+    val navController = rememberNavController()
+    NaoTimesTheme {
+        BottomNavigationBar(navController)
+    }
 }
