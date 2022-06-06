@@ -46,21 +46,21 @@ enum class StatusRole {
         override fun getFull() = "Quality Checker"
     };
 
-    abstract fun getShort(): String;
+    abstract fun getShort(): String
     abstract fun getFull(): String
 }
 
-data class ColorBox(val bg: Color, val text: Color, val border: Color)
+data class ColorBox(val bg: Color, val text: Color, val border: Color, val checkbox: Color)
 
 fun getStatusColor(type: StatusRole): ColorBox {
     return when (type) {
-        StatusRole.TL -> ColorBox(Red100, Red800, Red200)
-        StatusRole.TLC -> ColorBox(Yellow100, Yellow800, Yellow300)
-        StatusRole.ED -> ColorBox(Blue100, Blue800, Blue200)
-        StatusRole.ENC -> ColorBox(Green100, Green800, Green200)
-        StatusRole.TM -> ColorBox(Indigo100, Indigo800, Indigo200)
-        StatusRole.TS -> ColorBox(Purple100, Purple800, Purple200)
-        StatusRole.QC -> ColorBox(Pink100, Pink800, Pink200)
+        StatusRole.TL -> ColorBox(Red100, Red800, Red200, Red600)
+        StatusRole.TLC -> ColorBox(Yellow100, Yellow800, Yellow300, Yellow600)
+        StatusRole.ED -> ColorBox(Blue100, Blue800, Blue200, Blue600)
+        StatusRole.ENC -> ColorBox(Green100, Green800, Green200, Green600)
+        StatusRole.TM -> ColorBox(Indigo100, Indigo800, Indigo200, Indigo600)
+        StatusRole.TS -> ColorBox(Purple100, Purple800, Purple200, Purple600)
+        StatusRole.QC -> ColorBox(Pink100, Pink800, Pink200, Pink600)
     }
 }
 

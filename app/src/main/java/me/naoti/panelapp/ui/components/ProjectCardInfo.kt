@@ -1,7 +1,6 @@
 package me.naoti.panelapp.ui.components
 
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
@@ -11,7 +10,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -73,7 +71,6 @@ fun DeleteButtonDarkPreview() {
 
 @Composable
 fun ProjectCardInfo(project: ProjectInfoModel, appState: AppState) {
-    val log = getLogger("ProjectCardInfo")
     Card(
         modifier = Modifier
             .fillMaxWidth()

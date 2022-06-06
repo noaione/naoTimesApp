@@ -45,14 +45,27 @@ data class StatusTickProject(
     val typeset: Boolean = false,
     @Json(name = "QC")
     val qualityChecked: Boolean = false,
-)
+) {
+    fun isSame(other: StatusTickProject): Boolean {
+        return (
+            translated == other.translated &&
+            translateChecked == other.translateChecked &&
+            edited == other.edited &&
+            encoded == other.encoded &&
+            timed == other.timed &&
+            typeset == other.typeset &&
+            qualityChecked == other.qualityChecked
+        )
+    }
+}
 
+@JsonClass(generateAdapter = true)
 data class StatusProject(
-    val airtime: Int,
+    val airtime: Long,
     val episode: Int,
     @Json(name = "is_done")
     val isDone: Boolean,
-    val progress: StatusTickProject,
+    var progress: StatusTickProject,
 )
 
 data class Project(
@@ -60,8 +73,8 @@ data class Project(
     val title: String,
     val poster: String,
     @Json(name = "start_time")
-    val startTime: Int,
-    val status: StatusProject,
+    val startTime: Long,
+    var status: StatusProject,
     val assignments: AssignmentProject,
 )
 

@@ -1,6 +1,7 @@
 package me.naoti.panelapp.ui.components
 
 import android.widget.Toast
+import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -36,12 +37,22 @@ import me.naoti.panelapp.utils.getLogger
 @Composable
 fun EditableStaff(role: StatusRole, staff: AssignmentKeyValueProject, projectId: String, appCtx: AppState) {
     var editableState by remember { mutableStateOf(false) }
+    var submittingState by remember { mutableStateOf(false) }
     val mutableIdEdit = remember {
         mutableStateOf(TextFieldValue(staff.id ?: ""))
     }
     var stateEnabled by remember {
         mutableStateOf(true)
     }
+    val infiniteTransition = rememberInfiniteTransition()
+    val alphaAnimation by infiniteTransition.animateFloat(
+        initialValue = 1f,
+        targetValue = .5f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(500),
+            repeatMode = RepeatMode.Reverse
+        )
+    )
     var oldState by remember { mutableStateOf(staff.id ?: "") }
     var mutableName by remember { mutableStateOf(staff.name ?: "Unknown") }
     val colors = getStatusColor(role)
@@ -50,16 +61,19 @@ fun EditableStaff(role: StatusRole, staff: AssignmentKeyValueProject, projectId:
     val isDark = appCtx.isDarkMode()
 
     Column {
-        Text(text = role.getFull().uppercase(), style = TextStyle(
-            fontWeight = FontWeight.Light,
-            fontSize = 8.sp,
-            letterSpacing = 1.sp,
-            color = if (isDark) Gray100 else Gray900
-        ),
-        modifier = Modifier.padding(
-            horizontal = 10.dp,
-            vertical = 0.dp,
-        ))
+        Text(
+            text = role.getFull().uppercase(),
+            style = TextStyle(
+                fontWeight = FontWeight.Light,
+                fontSize = 10.sp,
+                letterSpacing = .5.sp,
+                color = if (isDark) Gray100 else Gray900
+            ),
+            modifier = Modifier.padding(
+                horizontal = 10.dp,
+                vertical = 0.dp,
+            )
+        )
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -88,8 +102,10 @@ fun EditableStaff(role: StatusRole, staff: AssignmentKeyValueProject, projectId:
                 Column(
                     modifier = Modifier
                         .padding(
-                            vertical = 4.dp,
-                            horizontal = 2.dp
+                            top = 4.dp,
+                            bottom = 4.dp,
+                            start = 2.dp,
+                            end = 10.dp,
                         )
                         .border(2.dp, colors.border)
                         .background(colors.bg)
@@ -130,6 +146,7 @@ fun EditableStaff(role: StatusRole, staff: AssignmentKeyValueProject, projectId:
                                     // change something
                                     log.i("Changing to ${mutableIdEdit.value}")
                                     stateEnabled = false
+                                    submittingState = true
                                     appCtx.coroutineScope.launch {
                                         val apiRes = appCtx.apiState.updateProjectStaff(
                                             ProjectAdjustStaffModel(
@@ -177,6 +194,7 @@ fun EditableStaff(role: StatusRole, staff: AssignmentKeyValueProject, projectId:
                                                 )
                                             }
                                         }
+                                        submittingState = false
                                         stateEnabled = true
                                         editableState = false
                                     }
@@ -191,15 +209,24 @@ fun EditableStaff(role: StatusRole, staff: AssignmentKeyValueProject, projectId:
                 BasicTextField(
                     value = mutableIdEdit.value,
                     enabled = stateEnabled,
-                    onValueChange = { mutableIdEdit.value = it },
+                    onValueChange = {
+                        // dont edit if state is disabled
+                        if (stateEnabled) {
+                            mutableIdEdit.value = it
+                        }
+                    },
                     modifier = Modifier
                         .padding(
-                            vertical = 4.dp,
-                            horizontal = 2.dp
+                            top = 4.dp,
+                            bottom = 4.dp,
+                            start = 2.dp,
+                            end = 10.dp,
                         )
                         .background(
-                            if (isDark) Gray600 else Gray200,
-                            MaterialTheme.shapes.small
+                            (if (isDark) Gray600 else Gray200).copy(
+                                alpha = if (submittingState) alphaAnimation else 1f
+                            ),
+                            MaterialTheme.shapes.small,
                         )
                         .fillMaxWidth()
                         .fillMaxHeight()
@@ -207,16 +234,18 @@ fun EditableStaff(role: StatusRole, staff: AssignmentKeyValueProject, projectId:
                     singleLine = true,
                     cursorBrush = SolidColor(MaterialTheme.colors.primary),
                     textStyle = LocalTextStyle.current.copy(
-                        color = if (isDark) Gray200 else Gray800,
+                        color = (if (isDark) Gray200 else Gray800).copy(
+                            alpha = if (submittingState) alphaAnimation else 1f
+                        ),
                         fontSize = 12.sp,
                     ),
-                    decorationBox = { innerTextField ->  
+                    decorationBox = { innerTextField ->
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier.padding(
                                 horizontal = 6.dp,
                                 vertical = 4.dp,
-                            )
+                            ),
                         ) {
                             innerTextField()
                         }

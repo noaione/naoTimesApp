@@ -1,8 +1,6 @@
 package me.naoti.panelapp.ui.screens
 
-import android.view.animation.OvershootInterpolator
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.tween
 import me.naoti.panelapp.R
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -14,19 +12,15 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.core.content.ContextCompat
-import androidx.navigation.NavController
-import coil.compose.rememberAsyncImagePainter
 import com.haroldadmin.cnradapter.NetworkResponse
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import me.naoti.panelapp.state.AppState
-import me.naoti.panelapp.state.rememberAppState
 import me.naoti.panelapp.ui.ScreenItem
+import me.naoti.panelapp.ui.components.naoTimesText
 import me.naoti.panelapp.utils.getLogger
 
 @Composable
@@ -104,10 +98,12 @@ fun SplashScreen(appState: AppState) {
                 .clip(RoundedCornerShape(50))
         )
         AnimatedVisibility(visible = expanded) {
-            Spacer(modifier = Modifier.height(4.dp))
             Text(
-                "naoTimes",
-                style = MaterialTheme.typography.h4
+                naoTimesText(),
+                style = MaterialTheme.typography.h4,
+                modifier = Modifier.padding(
+                    vertical = 10.dp,
+                )
             )
         }
     }

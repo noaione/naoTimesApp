@@ -253,7 +253,7 @@ data class ProjectInfoModel(
     val startTime: Int?,
     val assignments: AssignmentProject,
     @Json(name = "status")
-    val statuses: List<StatusProject>,
+    var statuses: MutableList<StatusProject>,
     @Json(name = "poster_data")
     val poster: ProjectPosterInfoModel,
     val aliases: List<String>,
@@ -290,7 +290,7 @@ val DefaultEmptyProject = ProjectInfoModel(
     null,
     null,
     AssignmentProject(),
-    listOf(),
+    mutableListOf(),
     ProjectPosterInfoModel("InvalidUrl"),
     listOf(),
     -1

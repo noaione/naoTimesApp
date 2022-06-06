@@ -86,9 +86,14 @@ data class ProjectAdjustStatusModel(
 
 // Response Model
 @JsonClass(generateAdapter = true)
+data class ProjectAdjustStatusResponseInner(
+    val progress: StatusTickProject,
+)
+
+@JsonClass(generateAdapter = true)
 data class ProjectAdjustStatusResponse(
     val success: Boolean,
-    val results: StatusTickProject? = null,
+    val results: ProjectAdjustStatusResponseInner? = null,
 )
 
 @JsonClass(generateAdapter = true)
