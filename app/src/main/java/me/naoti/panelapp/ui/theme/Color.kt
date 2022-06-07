@@ -1,6 +1,8 @@
 package me.naoti.panelapp.ui.theme
 
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
+import androidx.core.graphics.ColorUtils
 
 val Gray50 = Color(0xFFF8FAFC)
 val Gray100 = Color(0xfff1f5f9)
@@ -261,3 +263,11 @@ val md_theme_dark_inversePrimary = Color(0xFF944A00)
 val md_theme_dark_shadow = Color(0xFF000000)
 
 val seed = Color(0xFFFB923D)
+
+fun Color.darker(intensity: Float): Color {
+    return Color(ColorUtils.blendARGB(this.toArgb(), Color.Black.toArgb(), intensity))
+}
+
+fun Color.lighter(intensity: Float): Color {
+    return Color(ColorUtils.blendARGB(this.toArgb(), Color.White.toArgb(), intensity))
+}
