@@ -10,7 +10,7 @@ This utilize the published API located in [naoTimesUI](https://panel.naoti.me)
   
 ## Libraries Used
 - [Jetpack Compose](https://developer.android.com/jetpack/compose) `Framework`
-- [Material Design](https://developer.android.com/jetpack/androidx/releases/compose-material) `UI Kit`
+- [Material Design 3](https://developer.android.com/reference/kotlin/androidx/compose/material3/package-summary) `UI Kit`
 - [Coil](https://coil-kt.github.io/coil/) `Image Loader`
 - [Retrofit](https://square.github.io/retrofit/) `HTTP Client`
   - [NetworkResponseAdapter](https://haroldadmin.github.io/NetworkResponseAdapter/) `Interceptor for response by Retrofit`

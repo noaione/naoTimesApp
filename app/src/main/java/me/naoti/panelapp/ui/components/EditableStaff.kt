@@ -1,14 +1,12 @@
 package me.naoti.panelapp.ui.components
 
 import android.widget.Toast
-import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.material.*
+import androidx.compose.material3.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Edit
@@ -44,15 +42,6 @@ fun EditableStaff(role: StatusRole, staff: AssignmentKeyValueProject, projectId:
     var stateEnabled by remember {
         mutableStateOf(true)
     }
-    val infiniteTransition = rememberInfiniteTransition()
-    val alphaAnimation by infiniteTransition.animateFloat(
-        initialValue = 1f,
-        targetValue = .5f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(500),
-            repeatMode = RepeatMode.Reverse
-        )
-    )
     var oldState by remember { mutableStateOf(staff.id ?: "") }
     var mutableName by remember { mutableStateOf(staff.name ?: "Unknown") }
     val colors = getStatusColor(role)
@@ -83,29 +72,29 @@ fun EditableStaff(role: StatusRole, staff: AssignmentKeyValueProject, projectId:
             verticalAlignment = Alignment.CenterVertically,
         ) {
             if (!editableState) {
-                Icon(
-                    Icons.Filled.Edit,
-                    contentDescription = "Edit",
-                    modifier = Modifier
-                        .padding(
-                            top = 4.dp,
-                            bottom = 4.dp,
-                            start = 8.dp,
-                            end = 2.dp,
-                        )
-                        .clickable {
-                            editableState = true
-                        }
-                        .clip(ROUND),
-                    tint = if (isDark) Gray200 else Gray800
-                )
+                IconButton(
+                    onClick = {
+                        editableState = true
+                    },
+                    modifier = Modifier.padding(
+                        top = 4.dp,
+                        bottom = 4.dp,
+                        start = 8.dp,
+                        end = 8.dp,
+                    ).size(24.dp)
+                ) {
+                    Icon(
+                        Icons.Filled.Edit,
+                        contentDescription = "Edit",
+                    )
+                }
                 Column(
                     modifier = Modifier
                         .padding(
                             top = 4.dp,
                             bottom = 4.dp,
                             start = 2.dp,
-                            end = 10.dp,
+                            end = 2.dp,
                         )
                         .border(2.dp, colors.border)
                         .background(colors.bg)
@@ -128,84 +117,88 @@ fun EditableStaff(role: StatusRole, staff: AssignmentKeyValueProject, projectId:
                 }
 
             } else {
-                Icon(
-                    Icons.Filled.Done,
-                    contentDescription = "Done",
-                    modifier = Modifier
-                        .padding(
-                            top = 4.dp,
-                            bottom = 4.dp,
-                            start = 8.dp,
-                            end = 2.dp,
-                        )
-                        .clickable {
-                            if (stateEnabled) {
-                                if (mutableIdEdit.value.text == oldState) {
-                                    editableState = false
-                                } else {
-                                    // change something
-                                    log.i("Changing to ${mutableIdEdit.value}")
-                                    stateEnabled = false
-                                    submittingState = true
-                                    appCtx.coroutineScope.launch {
-                                        val apiRes = appCtx.apiState.updateProjectStaff(
-                                            ProjectAdjustStaffModel(
-                                                ProjectUpdateContentStaff(
-                                                    role.name,
-                                                    projectId,
-                                                    mutableIdEdit.value.text,
-                                                )
+                IconButton(
+                    modifier = Modifier.padding(
+                        top = 4.dp,
+                        bottom = 4.dp,
+                        start = 8.dp,
+                        end = 8.dp,
+                    ).size(24.dp),
+                    enabled = stateEnabled,
+                    onClick = {
+                        if (stateEnabled) {
+                            if (mutableIdEdit.value.text == oldState) {
+                                editableState = false
+                            } else {
+                                // change something
+                                log.i("Changing to ${mutableIdEdit.value}")
+                                stateEnabled = false
+                                submittingState = true
+                                appCtx.coroutineScope.launch {
+                                    val apiRes = appCtx.apiState.updateProjectStaff(
+                                        ProjectAdjustStaffModel(
+                                            ProjectUpdateContentStaff(
+                                                role.name,
+                                                projectId,
+                                                mutableIdEdit.value.text,
                                             )
                                         )
-                                        when (apiRes) {
-                                            is NetworkResponse.Success -> {
-                                                if (apiRes.body.success) {
-                                                    mutableName = apiRes.body.name ?: "Unknown"
-                                                    oldState = apiRes.body.id ?: ""
-                                                    mutableIdEdit.value = TextFieldValue(
-                                                        apiRes.body.id ?: ""
-                                                    )
-                                                } else {
-                                                    mutableIdEdit.value = TextFieldValue(
-                                                        oldState
-                                                    )
-                                                }
-                                            }
-                                            is NetworkResponse.NetworkError -> {
-                                                Toast.makeText(
-                                                    appCtx.contextState,
-                                                    "Failed to update role ${role.getFull()}",
-                                                    Toast.LENGTH_SHORT
-                                                ).show()
-                                                apiRes.error.let { log.e(it.stackTraceToString()) }
+                                    )
+                                    when (apiRes) {
+                                        is NetworkResponse.Success -> {
+                                            if (apiRes.body.success) {
+                                                mutableName = apiRes.body.name ?: "Unknown"
+                                                oldState = apiRes.body.id ?: ""
                                                 mutableIdEdit.value = TextFieldValue(
-                                                    oldState
+                                                    apiRes.body.id ?: ""
                                                 )
-                                            }
-                                            is NetworkResponse.Error -> {
-                                                Toast.makeText(
-                                                    appCtx.contextState,
-                                                    "An unknown error has occurred!",
-                                                    Toast.LENGTH_SHORT
-                                                ).show()
-                                                apiRes.error?.let { log.e(it.stackTraceToString()) }
+                                            } else {
                                                 mutableIdEdit.value = TextFieldValue(
                                                     oldState
                                                 )
                                             }
                                         }
-                                        submittingState = false
-                                        stateEnabled = true
-                                        editableState = false
+                                        is NetworkResponse.NetworkError -> {
+                                            Toast
+                                                .makeText(
+                                                    appCtx.contextState,
+                                                    "Failed to update role ${role.getFull()}",
+                                                    Toast.LENGTH_SHORT
+                                                )
+                                                .show()
+                                            apiRes.error.let { log.e(it.stackTraceToString()) }
+                                            mutableIdEdit.value = TextFieldValue(
+                                                oldState
+                                            )
+                                        }
+                                        is NetworkResponse.Error -> {
+                                            Toast
+                                                .makeText(
+                                                    appCtx.contextState,
+                                                    "An unknown error has occurred!",
+                                                    Toast.LENGTH_SHORT
+                                                )
+                                                .show()
+                                            apiRes.error?.let { log.e(it.stackTraceToString()) }
+                                            mutableIdEdit.value = TextFieldValue(
+                                                oldState
+                                            )
+                                        }
                                     }
+                                    submittingState = false
+                                    stateEnabled = true
+                                    editableState = false
                                 }
                             }
                         }
-                        .clip(ROUND),
-                    tint = (if (isDark) Gray200 else Gray800).copy(
-                        alpha = if (!stateEnabled) .75f else 1f
+                    }
+                ) {
+                    Icon(
+                        Icons.Filled.Done,
+                        contentDescription = "Done",
                     )
-                )
+                }
+
                 BasicTextField(
                     value = mutableIdEdit.value,
                     enabled = stateEnabled,
@@ -223,20 +216,16 @@ fun EditableStaff(role: StatusRole, staff: AssignmentKeyValueProject, projectId:
                             end = 10.dp,
                         )
                         .background(
-                            (if (isDark) Gray600 else Gray200).copy(
-                                alpha = if (submittingState) alphaAnimation else 1f
-                            ),
+                            MaterialTheme.colorScheme.surface,
                             MaterialTheme.shapes.small,
                         )
                         .fillMaxWidth()
                         .fillMaxHeight()
                         .clip(ROUND),
                     singleLine = true,
-                    cursorBrush = SolidColor(MaterialTheme.colors.primary),
+                    cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
                     textStyle = LocalTextStyle.current.copy(
-                        color = (if (isDark) Gray200 else Gray800).copy(
-                            alpha = if (submittingState) alphaAnimation else 1f
-                        ),
+                        color = MaterialTheme.colorScheme.onSurface,
                         fontSize = 12.sp,
                     ),
                     decorationBox = { innerTextField ->

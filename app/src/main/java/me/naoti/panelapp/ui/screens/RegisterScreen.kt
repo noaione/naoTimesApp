@@ -1,11 +1,12 @@
 package me.naoti.panelapp.ui.screens
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
-import androidx.compose.material.Button
-import androidx.compose.material.OutlinedTextField
-import androidx.compose.material.Text
+import androidx.compose.material3.Button
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -14,21 +15,19 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
 import com.haroldadmin.cnradapter.NetworkResponse
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import me.naoti.panelapp.network.ErrorCode
 import me.naoti.panelapp.network.models.RegisterModel
-import me.naoti.panelapp.state.rememberAppState
+import me.naoti.panelapp.state.AppState
 import me.naoti.panelapp.ui.ScreenItem
-import me.naoti.panelapp.ui.components.FailurePopup
-import me.naoti.panelapp.ui.components.InfoPopup
 import me.naoti.panelapp.ui.theme.*
 import me.naoti.panelapp.utils.getLogger
 
 @Composable
-fun RegisterScreen(navController: NavController) {
-    val context = rememberAppState()
+fun RegisterScreen(appState: AppState) {
+    val navController = appState.navController
     val log = getLogger()
     var allowMutate by remember { mutableStateOf(true) }
     val (errorMessage, setErrorMessage) = remember {
@@ -68,10 +67,10 @@ fun RegisterScreen(navController: NavController) {
             Button(
                 enabled = allowMutate,
                 onClick = {
-                    context.coroutineScope.launch {
+                    appState.coroutineScope.launch {
                         allowMutate = false
                         log.i("Registering with ${username.value.text} and user ${administrator.value.text}")
-                        when (val registerState = context.apiState.registerUser(
+                        when (val registerState = appState.apiState.registerUser(
                             RegisterModel(username.value.text, administrator.value.text)
                         )) {
                             is NetworkResponse.Success -> {
@@ -144,21 +143,31 @@ fun RegisterScreen(navController: NavController) {
             },
             style = TextStyle(
                 fontSize = 14.sp,
-                color = if (context.isDarkMode()) Blue300 else Blue500
+                color = if (appState.isDarkMode()) Blue300 else Blue500
             )
         )
     }
 
     if (errorMessage != null) {
         if (errorMessage == "Success") {
-            InfoPopup("Success, please wait...") {
+            LaunchedEffect(key1 = true) {
+                Toast.makeText(
+                    appState.contextState,
+                    "Success, redirecting...",
+                    Toast.LENGTH_SHORT
+                ).show()
+                delay(1500L)
                 navController.navigate(ScreenItem.LoginScreen.route) {
                     popUpTo(navController.graph.startDestinationId)
                     launchSingleTop = true
                 }
             }
         } else {
-            FailurePopup(errorMessage)
+            Toast.makeText(
+                appState.contextState,
+                errorMessage,
+                Toast.LENGTH_SHORT
+            ).show()
         }
     }
 }

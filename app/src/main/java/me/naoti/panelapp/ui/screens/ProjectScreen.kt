@@ -1,12 +1,10 @@
 package me.naoti.panelapp.ui.screens
 
 import android.widget.Toast
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.*
+import androidx.compose.material3.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.Composable
@@ -15,9 +13,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.google.accompanist.placeholder.PlaceholderHighlight
@@ -25,7 +23,6 @@ import com.google.accompanist.placeholder.placeholder
 import com.google.accompanist.placeholder.shimmer
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.haroldadmin.cnradapter.NetworkResponse
 import kotlinx.coroutines.launch
 import me.naoti.panelapp.R
@@ -70,6 +67,7 @@ suspend fun getProjectInformation(projectId: String, appState: AppState, forceRe
     return projectInfo
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProjectScreen(appState: AppState, projectId: String?) {
     val log = getLogger("ProjectInfoView")
@@ -95,61 +93,37 @@ fun ProjectScreen(appState: AppState, projectId: String?) {
         }
     }
 
-    val systemUiController = rememberSystemUiController()
-    val isDarkMode = appState.isDarkMode()
-    SideEffect {
-        systemUiController.setStatusBarColor(
-            color = if (isDarkMode) Gray900 else Gray200,
-            darkIcons = !isDarkMode
-        )
-    }
-
     Scaffold(
-        scaffoldState = appState.scaffoldState,
         topBar = {
-            TopAppBar(
-                backgroundColor = if (appState.isDarkMode()) Gray900 else Gray200,
-                contentColor = if (appState.isDarkMode()) White else Gray800
-            ) {
-                Row(
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    modifier = Modifier.fillMaxWidth(),
-                ) {
-                    Row(
-                        horizontalArrangement = Arrangement.Start,
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        Icon(
-                            painterResource(R.drawable.ic_icons_chevron_left),
-                            contentDescription = "Go back",
-                            modifier = Modifier
-                                .padding(4.dp)
-                                .clickable {
-                                    // go back
-                                    appState.navController.popBackStack()
-                                }
+            SmallTopAppBar(
+                title = {
+                    Text(
+                        text = if (projectInfo == null) "..." else projectInfo!!.title,
+                        style = TextStyle(
+                            fontWeight = FontWeight.Medium,
+                            letterSpacing = 0.sp,
+                            fontSize = 18.sp
                         )
-                        Spacer(modifier = Modifier.width(2.dp))
-                        Text(text = if (projectInfo == null) "..." else projectInfo!!.title)
+                    )
+                },
+                navigationIcon = {
+                    IconButton(onClick = {
+                        appState.navController.popBackStack()
+                    }) {
+                        Icon(painterResource(id = R.drawable.ic_icons_chevron_left), contentDescription = "Go Back")
                     }
-                    Row(
-                        horizontalArrangement = Arrangement.End,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
+                },
+                actions = {
+                    IconButton(onClick = {
+                        log.i("Adding new episode clicked!")
+                    }) {
                         Icon(
                             Icons.Filled.Add,
                             contentDescription = "Add New Episode",
-                            modifier = Modifier
-                                .padding(4.dp)
-                                .clickable {
-                                    log.i("Showing alert dialog modal for adding new episode")
-                                }
-                                .clip(CircleShape)
-                                .wrapContentWidth(Alignment.End),
                         )
                     }
                 }
-            }
+            )
         },
     ) { paddingVal ->
         SwipeRefresh(

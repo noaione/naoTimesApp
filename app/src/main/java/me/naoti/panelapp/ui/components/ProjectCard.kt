@@ -2,8 +2,7 @@ package me.naoti.panelapp.ui.components
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.ClickableText
-import androidx.compose.material.Card
-import androidx.compose.material.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -20,6 +19,7 @@ import me.naoti.panelapp.ui.ScreenItem
 import me.naoti.panelapp.ui.theme.*
 import me.naoti.panelapp.utils.getLogger
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProjectCard(project: ProjectListModel, appCtx: AppState) {
     val log = getLogger("DashboardProjectCardView")
@@ -28,7 +28,13 @@ fun ProjectCard(project: ProjectListModel, appCtx: AppState) {
         modifier = Modifier
             .fillMaxWidth()
             .padding(4.dp),
-        elevation = 5.dp
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = 5.dp,
+        ),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.secondaryContainer,
+            contentColor = MaterialTheme.colorScheme.onSecondaryContainer
+        )
     ) {
         Column {
             CoilImage(

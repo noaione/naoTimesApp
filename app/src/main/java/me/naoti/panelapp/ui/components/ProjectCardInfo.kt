@@ -3,7 +3,7 @@ package me.naoti.panelapp.ui.components
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
+import androidx.compose.material3.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.runtime.Composable
@@ -33,7 +33,7 @@ fun DeleteButton(projectId: String) {
             .padding(10.dp)
             .clip(RoundedCornerShape(5.dp)),
         colors = ButtonDefaults.buttonColors(
-            backgroundColor = Red600,
+            containerColor = Red600,
             contentColor = White
         )
     ) {
@@ -69,13 +69,20 @@ fun DeleteButtonDarkPreview() {
     DeleteButton(projectId = "123")
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProjectCardInfo(project: ProjectInfoModel, appState: AppState) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(4.dp),
-        elevation = 5.dp,
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = 5.dp,
+        ),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.secondaryContainer,
+            contentColor = MaterialTheme.colorScheme.onSecondaryContainer
+        )
     ) {
         Column {
             CoilImage(

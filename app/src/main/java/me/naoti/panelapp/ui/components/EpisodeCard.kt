@@ -1,14 +1,13 @@
 package me.naoti.panelapp.ui.components
 
-import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import android.widget.Toast
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Card
-import androidx.compose.material.Icon
-import androidx.compose.material.Text
-import androidx.compose.material.*
+import androidx.compose.material3.Card
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.filled.Delete
@@ -19,7 +18,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.google.accompanist.flowlayout.FlowRow
@@ -72,6 +70,7 @@ fun anyProgress(progress: StatusTickProject): Boolean {
     return progress.translated || progress.translateChecked || progress.encoded || progress.edited || progress.timed || progress.typeset || progress.qualityChecked
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CheckboxStatus(
     role: StatusRole,
@@ -83,6 +82,9 @@ fun CheckboxStatus(
     val statusCol = getStatusColor(role).checkbox
     val stateCheck = remember { mutableStateOf(state) }
     val isDark = rememberAppContextState().isDarkMode()
+    val disabledColor = statusCol.copy(alpha = .75f)
+    val uncheckedColor = if (isDark) White else Gray200
+    val disabledUncheked = uncheckedColor.copy(alpha = .75f)
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
@@ -98,11 +100,10 @@ fun CheckboxStatus(
             enabled = enabled,
             colors = CheckboxDefaults.colors(
                 checkedColor = statusCol,
-                uncheckedColor = if (isDark) White else Gray200,
+                uncheckedColor = uncheckedColor,
                 checkmarkColor = Color.White,
-                disabledColor = statusCol.copy(
-                    alpha = .75f
-                ),
+                disabledCheckedColor = disabledColor,
+                disabledUncheckedColor = disabledUncheked,
             ),
             modifier = Modifier.padding(0.dp)
         )
@@ -311,6 +312,7 @@ fun EpisodeCardView(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EpisodeCard(projectId: String, status: StatusProject, appState: AppState, onStateEdited: (StatusProject) -> Unit) {
     val log = getLogger("EpisodeCard")
@@ -331,12 +333,19 @@ fun EpisodeCard(projectId: String, status: StatusProject, appState: AppState, on
         modifier = Modifier
             .fillMaxWidth()
             .padding(4.dp),
-        elevation = 5.dp,
-        backgroundColor = MaterialTheme.colors.surface
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = 5.dp,
+        ),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.secondaryContainer,
+            contentColor = MaterialTheme.colorScheme.onSecondaryContainer
+        )
     ) {
         Column {
             if (isSubmitting) {
-                LinearProgressIndicator(modifier = Modifier.height(2.dp).fillMaxWidth())
+                LinearProgressIndicator(modifier = Modifier
+                    .height(2.dp)
+                    .fillMaxWidth())
             } else {
                 Spacer(modifier = Modifier.height(2.dp))
             }
@@ -352,7 +361,6 @@ fun EpisodeCard(projectId: String, status: StatusProject, appState: AppState, on
                     text = "Episode ${status.episode}",
                     style = TextStyle(
                         fontWeight = FontWeight.Bold,
-                        color = textColor,
                         fontSize = 18.sp,
                     ),
                     modifier = Modifier.padding(
@@ -363,13 +371,8 @@ fun EpisodeCard(projectId: String, status: StatusProject, appState: AppState, on
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.padding(horizontal = 4.dp)
                 ) {
-                    Icon(
-                        imageVector = if (dialogEdit) Icons.Filled.Done else Icons.Filled.Edit,
-                        contentDescription = "Edit",
-                        tint = textColor.copy(
-                            alpha = if (isSubmitting) .7f else 1f
-                        ),
-                        modifier = Modifier.clickable {
+                    IconButton(
+                        onClick = {
                             if (!isSubmitting) {
                                 if (!dialogEdit) {
                                     log.i("Moving to edit state")
@@ -468,21 +471,29 @@ fun EpisodeCard(projectId: String, status: StatusProject, appState: AppState, on
                                     }
                                 }
                             }
-                        }
-                    )
+                        },
+                        enabled = !isSubmitting,
+                        modifier = Modifier.size(24.dp),
+                    ) {
+                        Icon(
+                            imageVector = if (dialogEdit) Icons.Filled.Done else Icons.Filled.Edit,
+                            contentDescription = "Edit",
+                        )
+                    }
                     Spacer(modifier = Modifier.width(4.dp))
-                    Icon(
-                        imageVector = Icons.Filled.Delete,
-                        contentDescription = "Delete",
-                        tint = textColor.copy(
-                            alpha = if (isSubmitting) .7f else 1f
-                        ),
-                        modifier = Modifier.clickable {
+                    IconButton(
+                        onClick = {
                             if (!isSubmitting) {
-                                log.i("Trying to show delete alert!")
+                                log.i("Showing alert dialog...")
                             }
-                        }
-                    )
+                        },
+                        modifier = Modifier.size(24.dp),
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.Delete,
+                            contentDescription = "Delete",
+                        )
+                    }
                 }
             }
 

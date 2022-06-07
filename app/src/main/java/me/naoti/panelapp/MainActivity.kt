@@ -5,16 +5,14 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import me.naoti.panelapp.state.AppState
 import me.naoti.panelapp.state.rememberAppState
 import me.naoti.panelapp.ui.AppScaffold
@@ -41,7 +39,7 @@ fun NaoTimesView(appState: AppState) {
             modifier = Modifier
                 .fillMaxWidth()
                 .fillMaxHeight(),
-            color = MaterialTheme.colors.background
+            color = MaterialTheme.colorScheme.background
         ) {
             NavHost(navController = appState.navController, startDestination = ScreenItem.SplashScreen.route) {
                 composable(ScreenItem.SplashScreen.route) {
@@ -51,7 +49,7 @@ fun NaoTimesView(appState: AppState) {
                     LoginScreen(appState.navController)
                 }
                 composable(ScreenItem.RegisterScreen.route) {
-                    RegisterScreen(appState.navController)
+                    RegisterScreen(appState)
                 }
                 composable(ScreenItem.AppScaffold.route) {
                     AppScaffold(appState)

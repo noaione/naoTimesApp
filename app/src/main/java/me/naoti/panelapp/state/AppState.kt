@@ -2,8 +2,6 @@ package me.naoti.panelapp.state
 
 import android.content.Context
 import android.content.res.Configuration
-import androidx.compose.material.ScaffoldState
-import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -20,7 +18,6 @@ import me.naoti.panelapp.network.models.ProjectInfoModel
 import kotlin.time.Duration.Companion.minutes
 
 open class AppContextState (
-    val scaffoldState: ScaffoldState,
     val contextState: Context,
     val coroutineScope: CoroutineScope,
     val navController: NavHostController,
@@ -32,7 +29,7 @@ open class AppContextState (
 
     var shouldShowAppbar: Boolean
         get() = isAppBar
-        set(shouldShow: Boolean) {
+        set(shouldShow) {
             isAppBar = shouldShow
         }
 
@@ -86,10 +83,9 @@ open class AppContextState (
 }
 
 class AppState (
-    scaffoldState: ScaffoldState, contextState: Context,
-    coroutineScope: CoroutineScope, navController: NavHostController,
+    contextState: Context, coroutineScope: CoroutineScope, navController: NavHostController,
     var navAppController: NavHostController, val apiState: ApiRoutes,
-) : AppContextState(scaffoldState, contextState, coroutineScope, navController) {
+) : AppContextState(contextState, coroutineScope, navController) {
     fun getCurrentUser(): UserInfoModel? {
         val userRaw = contextState
             .getSharedPreferences(
@@ -135,22 +131,20 @@ class AppState (
 
 @Composable
 fun rememberAppState(
-    scaffoldState: ScaffoldState = rememberScaffoldState(),
     contextState: Context = LocalContext.current.applicationContext,
     coroutineScope: CoroutineScope = rememberCoroutineScope(),
     navController: NavHostController = rememberNavController(),
     navAppController: NavHostController = rememberNavController(),
     apiState: ApiRoutes = rememberApiState(),
-) = remember(scaffoldState, contextState, coroutineScope, navController, navAppController, apiState) {
-    AppState(scaffoldState, contextState, coroutineScope, navController, navAppController, apiState)
+) = remember(contextState, coroutineScope, navController, navAppController, apiState) {
+    AppState(contextState, coroutineScope, navController, navAppController, apiState)
 }
 
 @Composable
 fun rememberAppContextState(
-    scaffoldState: ScaffoldState = rememberScaffoldState(),
     contextState: Context = LocalContext.current.applicationContext,
     coroutineScope: CoroutineScope = rememberCoroutineScope(),
     navController: NavHostController = rememberNavController(),
-) = remember(scaffoldState, contextState, coroutineScope, navController) {
-    AppContextState(scaffoldState, contextState, coroutineScope, navController)
+) = remember(contextState, coroutineScope, navController) {
+    AppContextState(contextState, coroutineScope, navController)
 }

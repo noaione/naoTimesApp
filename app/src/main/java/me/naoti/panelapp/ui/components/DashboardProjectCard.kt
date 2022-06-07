@@ -2,38 +2,30 @@ package me.naoti.panelapp.ui.components
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.ClickableText
-import androidx.compose.material.Card
-import androidx.compose.material.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
-import coil.compose.AsyncImage
-import coil.request.ImageRequest
 import com.google.accompanist.flowlayout.FlowRow
 import me.naoti.panelapp.builder.CoilImage
 import me.naoti.panelapp.network.models.*
 import me.naoti.panelapp.state.AppContextState
 import me.naoti.panelapp.state.rememberAppContextState
 import me.naoti.panelapp.ui.ScreenItem
-import me.naoti.panelapp.ui.theme.Gray100
-import me.naoti.panelapp.ui.theme.Gray300
-import me.naoti.panelapp.ui.theme.Gray700
-import me.naoti.panelapp.ui.theme.Gray900
+import me.naoti.panelapp.ui.theme.*
 import me.naoti.panelapp.utils.getLogger
 
 fun waitForRelease(progress: StatusTickProject): Boolean {
     return progress.translated && progress.translateChecked && progress.encoded && progress.edited && progress.timed && progress.typeset && progress.qualityChecked
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DashboardProjectCard(project: Project, appCtx: AppContextState = rememberAppContextState()) {
     val log = getLogger("DashboardProjectCardView")
@@ -42,7 +34,13 @@ fun DashboardProjectCard(project: Project, appCtx: AppContextState = rememberApp
         modifier = Modifier
             .fillMaxWidth()
             .padding(4.dp),
-        elevation = 5.dp
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = 5.dp,
+        ),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.secondaryContainer,
+            contentColor = MaterialTheme.colorScheme.onSecondaryContainer
+        )
     ) {
         Column {
             CoilImage(
@@ -60,7 +58,7 @@ fun DashboardProjectCard(project: Project, appCtx: AppContextState = rememberApp
                 style = TextStyle(
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
-                    color = if (appCtx.isDarkMode()) Gray100 else Gray900,
+                    color = MaterialTheme.colorScheme.onSecondaryContainer
                 ),
                 modifier = Modifier.padding(
                     horizontal = 10.dp,
@@ -87,9 +85,6 @@ fun DashboardProjectCard(project: Project, appCtx: AppContextState = rememberApp
                     bottom = 2.dp,
                     start = 10.dp,
                     end = 10.dp,
-                ),
-                style = TextStyle(
-                    color = if (appCtx.isDarkMode()) Gray300 else Gray700
                 )
             )
             Spacer(modifier = Modifier.height(2.dp))
@@ -149,10 +144,10 @@ fun ProjectCardPreview() {
         "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx105914-VXKB0ZA2aVZF.png",
         1554854400,
         StatusProject(
-            1555507800,
-            2,
-            false,
-            StatusTickProject()
+            airtime = 1555507800,
+            episode = 2,
+            isDone = false,
+            progress = StatusTickProject()
         ),
         AssignmentProject(
             sampleKeyVal,
@@ -164,5 +159,7 @@ fun ProjectCardPreview() {
             sampleKeyVal
         )
     )
-    DashboardProjectCard(project = project)
+    NaoTimesTheme {
+        DashboardProjectCard(project = project)
+    }
 }
