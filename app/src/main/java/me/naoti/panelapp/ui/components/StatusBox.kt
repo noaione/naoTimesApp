@@ -20,34 +20,42 @@ enum class StatusRole {
     TL {
         override fun getShort() = "TL"
         override fun getFull() = "Translator"
+        override fun getFullRole() = "Translation"
     },
     TLC {
         override fun getShort() = "TLC"
         override fun getFull() = "Translation Checker"
+        override fun getFullRole() = "Translation Check"
     },
     ED {
         override fun getShort() = "Edit"
         override fun getFull() = "Editor"
+        override fun getFullRole() = "Editing"
     },
     ENC {
         override fun getShort() = "Encode"
         override fun getFull() = "Encoder"
+        override fun getFullRole() = "Encoding"
     },
     TM {
         override fun getShort() = "Timing"
         override fun getFull() = "Timer"
+        override fun getFullRole() = "Timing"
     },
     TS {
         override fun getShort() = "TS"
         override fun getFull() = "Typesetter"
+        override fun getFullRole() = "Typesetting"
     },
     QC {
         override fun getShort() = "QC"
         override fun getFull() = "Quality Checker"
+        override fun getFullRole() = "Quality Check"
     };
 
     abstract fun getShort(): String
     abstract fun getFull(): String
+    abstract fun getFullRole(): String
 }
 
 data class ColorBox(val bg: Color, val text: Color, val border: Color, val checkbox: Color)
