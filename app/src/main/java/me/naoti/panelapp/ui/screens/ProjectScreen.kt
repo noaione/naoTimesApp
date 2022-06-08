@@ -85,11 +85,14 @@ fun ProjectScreen(appState: AppState, projectId: String?) {
 
     var projectInfo by remember { mutableStateOf<ProjectInfoModel?>(null) }
     val swipeState = rememberSwipeRefreshState(false)
+    var loadingState by remember { mutableStateOf(false) }
 
     LaunchedEffect(key1 = true) {
         appState.coroutineScope.launch {
             // request to API for project information
+            loadingState = true
             projectInfo = getProjectInformation(projectId, appState)
+            loadingState = false
         }
     }
 
@@ -131,7 +134,9 @@ fun ProjectScreen(appState: AppState, projectId: String?) {
             onRefresh = {
                 appState.coroutineScope.launch {
                     log.i("Fetching new project information")
+                    loadingState = true
                     val newProject = getProjectInformation(projectId, appState, forceRefresh = true)
+                    loadingState = false
                     if (newProject != null) {
                         projectInfo = newProject
                     } else {
@@ -144,6 +149,15 @@ fun ProjectScreen(appState: AppState, projectId: String?) {
                 bottom = paddingVal.calculateBottomPadding()
             )
         ) {
+            if (loadingState) {
+                LinearProgressIndicator(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(4.dp)
+                )
+            } else {
+                Spacer(modifier = Modifier.height(4.dp))
+            }
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -152,13 +166,13 @@ fun ProjectScreen(appState: AppState, projectId: String?) {
                         end = 20.dp,
                     )
                     .verticalScroll(rememberScrollState())
-                    .placeholder(
-                        visible = projectInfo == null,
-                        highlight = PlaceholderHighlight.shimmer(
-                            highlightColor = if (appState.isDarkMode()) Gray600 else Gray200
-                        ),
-                        color = if (appState.isDarkMode()) Gray700 else Gray100
-                    )
+//                    .placeholder(
+//                        visible = projectInfo == null,
+//                        highlight = PlaceholderHighlight.shimmer(
+//                            highlightColor = MaterialTheme.colorScheme.onSecondary.lighter(.2f)
+//                        ),
+//                        color = MaterialTheme.colorScheme.onSecondary
+//                    )
             ) {
                 projectInfo?.let { project ->
                     Spacer(modifier = Modifier.height(4.dp))

@@ -94,12 +94,20 @@ enum class ErrorCode(val actual: Int, val alias: Int? = null, val customMsg: Str
         override fun asText() = "Project list is empty!"
         override fun asText(extra: String) = "Project list is empty!"
     },
+    ProjectEpisodeNotFound(4304) {
+        override fun asText() = "The specified episode cannot be found in the project!"
+        override fun asText(extra: String) = "Episode $extra cannot be found in the project!"
+    },
 
     DatabaseUpdateFailed(4500) {
         override fun asText() = "Failed to update main database!"
         override fun asText(extra: String) = "Failed to update main database!"
     },
-    ProjectRemoveFailed(4501) {
+    DatabaseServerNotFound(4501) {
+        override fun asText() = "Unable to find specified server on database!"
+        override fun asText(extra: String) = "Unable to find server $extra on database!"
+    },
+    ProjectRemoveFailed(4502) {
         override fun asText() = "Failed to remove project from main database!"
         override fun asText(extra: String) = "Failed to remove $extra from main database!"
     },

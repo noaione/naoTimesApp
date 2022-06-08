@@ -38,6 +38,7 @@ data class AnimeMatchModel(
     val titleMatchEnglish: String,
     @Json(name = "titlematchother")
     val titleMatchOther: String,
+    val episodes: Int?
 ) {
     fun getTitle(): String {
         return title.romaji ?: (title.english ?: (title.native ?: "????"))
@@ -49,6 +50,10 @@ data class AnimeMatchModel(
         val selTitle = getTitle()
 
         return "$selTitle ($startDate) [$format] [$id]"
+    }
+
+    fun selectPoster(): String {
+        return coverImage.extraLarge ?: (coverImage.large ?: coverImage.medium)!!
     }
 }
 

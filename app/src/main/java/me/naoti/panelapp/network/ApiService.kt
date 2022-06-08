@@ -51,6 +51,8 @@ interface ApiRoutes {
     suspend fun removeProjectEpisode(@Body episodes: ProjectEpisodeRemoveModel): NetworkResponse<ErrorModelWithData<List<ProjectEpisodeRemovedResponse>>, ErrorModel>
     @POST("showtimes/proyek/episode")
     suspend fun addProjectEpisode(@Body episodes: ProjectEpisodeAddModel): NetworkResponse<ErrorModelWithData<List<StatusProject>>, ErrorModel>
+    @POST("showtimes/proyek/rilis")
+    suspend fun updateReleaseStatus(@Body release: ProjectAdjustReleaseModel): NetworkResponse<ErrorModel, ErrorModel>
     @POST("anilist/find")
     suspend fun findAnime(@Query("q") query: String): NetworkResponse<AnimeFindModel, AnimeFindModel>
 

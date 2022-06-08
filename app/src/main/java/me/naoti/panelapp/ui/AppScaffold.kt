@@ -1,6 +1,7 @@
 package me.naoti.panelapp.ui
 
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
@@ -9,6 +10,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import me.naoti.panelapp.navigation.NavigationHost
@@ -26,7 +28,9 @@ fun ProjectAddButton(navController: NavController) {
             log.i("Moving to project add view!")
             navController.navigate(ScreenItem.ProjectAddScreen.route)
         },
-        modifier = Modifier.padding(6.dp),
+        modifier = Modifier
+            .padding(6.dp)
+            .clip(RoundedCornerShape(6.dp)),
     ) {
         Icon(Icons.Filled.Add, contentDescription = "Add Project")
     }

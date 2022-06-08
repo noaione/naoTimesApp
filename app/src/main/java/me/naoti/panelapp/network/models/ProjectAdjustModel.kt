@@ -84,6 +84,15 @@ data class ProjectAdjustStatusModel(
     val event: String = "status",
 )
 
+@JsonClass(generateAdapter = true)
+data class ProjectAdjustReleaseModel(
+    val episode: Int,
+    @Json(name = "anime_id")
+    val projectId: String,
+    @Json(name = "is_done")
+    val isDone: Boolean = false,
+)
+
 // Response Model
 @JsonClass(generateAdapter = true)
 data class ProjectAdjustStatusResponseInner(

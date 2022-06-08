@@ -6,6 +6,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Done
@@ -20,6 +21,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -56,7 +58,7 @@ fun EditableStaff(role: StatusRole, staff: AssignmentKeyValueProject, projectId:
                 fontWeight = FontWeight.Light,
                 fontSize = 10.sp,
                 letterSpacing = .5.sp,
-                color = if (isDark) Gray100 else Gray900
+                color = MaterialTheme.colorScheme.secondary.darker(.3f)
             ),
             modifier = Modifier.padding(
                 horizontal = 10.dp,
@@ -227,6 +229,9 @@ fun EditableStaff(role: StatusRole, staff: AssignmentKeyValueProject, projectId:
                     textStyle = LocalTextStyle.current.copy(
                         color = MaterialTheme.colorScheme.onSurface,
                         fontSize = 12.sp,
+                    ),
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Number,
                     ),
                     decorationBox = { innerTextField ->
                         Row(

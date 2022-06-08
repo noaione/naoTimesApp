@@ -52,7 +52,6 @@ fun ProjectCard(project: ProjectListModel, appCtx: AppState) {
                 style = TextStyle(
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
-                    color = if (appCtx.isDarkMode()) Gray100 else Gray900,
                 ),
                 modifier = Modifier.padding(
                     horizontal = 10.dp,

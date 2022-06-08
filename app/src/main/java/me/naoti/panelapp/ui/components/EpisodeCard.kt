@@ -4,6 +4,7 @@ import android.widget.Toast
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -15,6 +16,7 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -24,6 +26,7 @@ import com.google.accompanist.flowlayout.FlowRow
 import com.haroldadmin.cnradapter.NetworkResponse
 import kotlinx.coroutines.launch
 import me.naoti.panelapp.builder.TimeString
+import me.naoti.panelapp.network.ErrorCode
 import me.naoti.panelapp.network.models.*
 import me.naoti.panelapp.state.AppState
 import me.naoti.panelapp.state.rememberAppContextState
@@ -105,13 +108,18 @@ fun CheckboxStatus(
                 disabledCheckedColor = disabledColor,
                 disabledUncheckedColor = disabledUncheked,
             ),
-            modifier = Modifier.padding(0.dp)
+            modifier = Modifier
+                .padding(
+                    top = 3.dp,
+                    bottom = 3.dp,
+                    end = 6.dp
+                )
+                .size(24.dp)
         )
 //        Spacer(modifier = Modifier.width(2.dp))
         Text(
             text = role.getShort(),
             fontWeight = FontWeight.Bold,
-            color = if (isDark) Gray200 else Gray700
         )
     }
 }
@@ -328,7 +336,9 @@ fun EpisodeCard(projectId: String, status: StatusProject, appState: AppState, on
     var checkedState by remember {
         mutableStateOf(EpisodeChecked.fromStatus(status.progress))
     }
-    val textColor = if (appState.isDarkMode()) Gray200 else Color.Black
+    var isReleased by remember {
+        mutableStateOf(status.isDone)
+    }
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -499,6 +509,91 @@ fun EpisodeCard(projectId: String, status: StatusProject, appState: AppState, on
 
             Spacer(modifier = Modifier.height(2.dp))
             EpisodeCardView(status, dialogEdit, checkedState, isSubmitting = isSubmitting)
+            Spacer(modifier = Modifier.height(2.dp))
+            Button(
+                enabled = !isSubmitting,
+                onClick = {
+                    // release
+                    val toggleModel = ProjectAdjustReleaseModel(
+                        projectId = projectId,
+                        episode = status.episode,
+                        isDone = !isReleased,
+                    )
+                    isSubmitting = true
+                    appState.coroutineScope.launch {
+                        when (val result = appState.apiState.updateReleaseStatus(toggleModel)) {
+                            is NetworkResponse.Success -> {
+                                if (result.body.success) {
+                                    isReleased = !isReleased
+                                    status.isDone = isReleased
+                                } else {
+                                    val body = result.body
+                                    val theText = when (body.code) {
+                                        ErrorCode.ProjectEpisodeNotFound -> {
+                                            body.code.asText(status.episode.toString())
+                                        }
+                                        ErrorCode.ProjectNotFound -> {
+                                            body.code.asText(projectId)
+                                        }
+                                        else -> {
+                                            if (body.code != null) {
+                                                body.code.asText()
+                                            } else {
+                                                ErrorCode.UnknownError.asText()
+                                            }
+                                        }
+                                    }
+                                    Toast.makeText(
+                                        appState.contextState,
+                                        theText,
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }
+                            }
+                            is NetworkResponse.Error -> {
+                                val body = result.body
+                                var theText = result.error.toString()
+                                if (body != null) {
+                                    theText = when (body.code) {
+                                        ErrorCode.ProjectEpisodeNotFound -> {
+                                            body.code.asText(status.episode.toString())
+                                        }
+                                        ErrorCode.ProjectNotFound -> {
+                                            body.code.asText(projectId)
+                                        }
+                                        else -> {
+                                            if (body.code != null) {
+                                                body.code.asText()
+                                            } else {
+                                                ErrorCode.UnknownError.asText()
+                                            }
+                                        }
+                                    }
+                                }
+                                Toast.makeText(
+                                    appState.contextState,
+                                    theText,
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                        }
+                        isSubmitting = false
+                    }
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.CenterHorizontally)
+                    .clip(RoundedCornerShape(10.dp))
+                    .padding(vertical = 4.dp, horizontal = 8.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = if (isReleased) Red600 else Green600,
+                    contentColor = White,
+                    disabledContainerColor = (if (isReleased) Red600 else Green600).darker(.3f),
+                    disabledContentColor = White.darker(.3f)
+                )
+            ) {
+                Text(text = if (isReleased) "Undo Release" else "Release")
+            }
         }
     }
 }

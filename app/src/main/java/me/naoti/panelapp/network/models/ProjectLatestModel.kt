@@ -64,7 +64,7 @@ data class StatusProject(
     val airtime: Long,
     val episode: Int,
     @Json(name = "is_done")
-    val isDone: Boolean,
+    var isDone: Boolean,
     var progress: StatusTickProject,
 )
 

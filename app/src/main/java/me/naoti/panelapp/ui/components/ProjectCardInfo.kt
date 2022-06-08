@@ -103,7 +103,6 @@ fun ProjectCardInfo(project: ProjectInfoModel, appState: AppState) {
                 style = TextStyle(
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
-                    color = if (appState.isDarkMode()) Gray100 else Gray900
                 ),
                 modifier = Modifier.padding(
                     horizontal = 10.dp,

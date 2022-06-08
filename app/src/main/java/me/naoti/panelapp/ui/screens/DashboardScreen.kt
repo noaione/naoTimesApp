@@ -13,6 +13,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
@@ -193,7 +194,6 @@ fun DashboardScreen(appState: AppState, paddingValues: PaddingValues? = null) {
                 ) {
                     Text(
                         text = ongoingCount.toString(),
-                        color = if (appState.isDarkMode()) Gray200 else Gray900,
                         style = TextStyle(
                             fontWeight = FontWeight.SemiBold,
                             fontSize = 18.sp,
@@ -201,14 +201,13 @@ fun DashboardScreen(appState: AppState, paddingValues: PaddingValues? = null) {
                         modifier = Modifier.placeholder(
                             visible = ongoingCount == -1,
                             highlight = PlaceholderHighlight.shimmer(
-                                highlightColor = if (appState.isDarkMode()) Gray600 else Gray200
+                                highlightColor = MaterialTheme.colorScheme.onSecondary.lighter(.2f)
                             ),
-                            color = if (appState.isDarkMode()) Gray700 else Gray100
+                            color = MaterialTheme.colorScheme.onSecondary
                         )
                     )
                     Text(
                         "Ongoing",
-                        color = Gray400
                     )
                 }
             }
@@ -237,7 +236,6 @@ fun DashboardScreen(appState: AppState, paddingValues: PaddingValues? = null) {
                 ) {
                     Text(
                         text = finishedCount.toString(),
-                        color = if (appState.isDarkMode()) Gray200 else Gray900,
                         style = TextStyle(
                             fontWeight = FontWeight.SemiBold,
                             fontSize = 18.sp,
@@ -245,14 +243,13 @@ fun DashboardScreen(appState: AppState, paddingValues: PaddingValues? = null) {
                         modifier = Modifier.placeholder(
                             visible = finishedCount == -1,
                             highlight = PlaceholderHighlight.shimmer(
-                                highlightColor = if (appState.isDarkMode()) Gray600 else Gray200
+                                highlightColor = MaterialTheme.colorScheme.onSecondary.lighter(.2f)
                             ),
-                            color = if (appState.isDarkMode()) Gray700 else Gray100
+                            color = MaterialTheme.colorScheme.onSecondary
                         )
                     )
                     Text(
                         "Finished",
-                        color = Gray400
                     )
                 }
             }

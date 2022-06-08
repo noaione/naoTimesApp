@@ -4,10 +4,7 @@ import android.content.Context
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -42,17 +39,21 @@ abstract class SearchDebouncer<T>(
     private var searchJob: Job? = null
     val apiState = ApiService.getService(context)
     val log = getLogger("AnilistDebouncer")
+    var isSearching = false
 
     abstract suspend fun searchNet(query: String): List<T>
 
     fun submitSearch(query: String) {
         searchJob?.cancel()
+        isSearching = false
         searchJob = coroutineScope.launch {
             log.i("Launching new search job: $query")
+            isSearching = true
             delay(debouncePeriod)
             log.i("Job not cancelled, continuing...")
             onSearchResult?.let { innerCall ->
                 innerCall(searchNet(query), query)
+                isSearching = false
             }
         }
     }
@@ -64,7 +65,10 @@ fun <T> NetworkSearch(
     itemContent: @Composable (T) -> Unit,
     searchDebouncer: SearchDebouncer<T>,
     onItemSelected: (T) -> Unit,
+    onCleared: (() -> Unit)? = null,
     modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    isError: Boolean = false,
 ) {
     var value by remember { mutableStateOf("") }
     var isFocus by remember {
@@ -83,35 +87,53 @@ fun <T> NetworkSearch(
     ) {
         OutlinedTextField(
             modifier = Modifier
-                .fillMaxWidth(.9f)
+                .fillMaxWidth()
                 .onFocusChanged {
                     isFocus = it.isFocused
                 },
             value = value,
             onValueChange = { query ->
-                value = query
-                searchDebouncer.submitSearch(query)
+                if (enabled) {
+                    value = query
+                    searchDebouncer.submitSearch(query)
+                }
             },
             label = { Text(text = "Search...") },
             textStyle = MaterialTheme.typography.bodyMedium,
+            isError = isError,
             singleLine = true,
             trailingIcon = {
-                IconButton(onClick = {
-                    value = ""
-                    itemsFound = listOf()
-                }) {
-                    Icon(imageVector = Icons.Filled.Clear, contentDescription = "Clear")
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    if (searchDebouncer.isSearching) {
+                        DotsFlashing(8.dp)
+                    }
+                    IconButton(onClick = {
+                        if (enabled) {
+                            value = ""
+                            itemsFound = listOf()
+                            if (onCleared != null) {
+                                onCleared()
+                            }
+                        }
+                    }) {
+                        Icon(imageVector = Icons.Filled.Clear, contentDescription = "Clear")
+                    }
                 }
+
             },
             keyboardOptions = KeyboardOptions(
                 imeAction = ImeAction.Done,
                 keyboardType = KeyboardType.Text
-            )
+            ),
+            enabled = enabled
         )
         AnimatedVisibility(visible = isFocus) {
             LazyColumn(
                 modifier = Modifier
-                    .fillMaxWidth(.9f)
+                    .fillMaxWidth()
+                    .height(300.dp)
                     .border(2.dp, MaterialTheme.colorScheme.primary)
                     .clip(RoundedCornerShape(4.dp)),
                 horizontalAlignment = Alignment.CenterHorizontally,

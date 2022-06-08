@@ -122,11 +122,10 @@ fun LoginScreen(navController: NavController) {
     }
 
     Column(
-        modifier = Modifier.padding(20.dp),
+        modifier = Modifier.padding(20.dp).wrapContentSize(Alignment.Center),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-
         Text(text = "Login", style = TextStyle(fontSize = 24.sp))
         Spacer(modifier = Modifier.height(20.dp))
         OutlinedTextField(
