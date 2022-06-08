@@ -2,18 +2,20 @@ package me.naoti.panelapp.state
 
 import android.content.Context
 import android.content.res.Configuration
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
+import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import kotlinx.coroutines.CoroutineScope
 import me.naoti.panelapp.R
 import me.naoti.panelapp.builder.getMoshi
 import me.naoti.panelapp.network.ApiRoutes
 import me.naoti.panelapp.network.models.UserInfoModel
 import io.github.reactivecircus.cache4k.Cache
+import me.naoti.panelapp.network.CookieSenderInterceptor
 import me.naoti.panelapp.network.models.ProjectInfoModel
 import kotlin.time.Duration.Companion.minutes
 
@@ -124,27 +126,40 @@ class AppState (
             .apply()
     }
 
+    fun clearUserCookie() {
+        contextState
+            .getSharedPreferences(
+                contextState.getString(R.string.app_name),
+                Context.MODE_PRIVATE
+            )
+            .edit()
+            .putStringSet(CookieSenderInterceptor.COOKIE_KEY, HashSet<String>())
+            .apply()
+    }
+
     companion object {
         const val USER_CONTEXT = "naotimes_current_user"
     }
 }
 
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun rememberAppState(
     contextState: Context = LocalContext.current.applicationContext,
     coroutineScope: CoroutineScope = rememberCoroutineScope(),
-    navController: NavHostController = rememberNavController(),
-    navAppController: NavHostController = rememberNavController(),
+    navController: NavHostController = rememberAnimatedNavController(),
+    navAppController: NavHostController = rememberAnimatedNavController(),
     apiState: ApiRoutes = rememberApiState(),
 ) = remember(contextState, coroutineScope, navController, navAppController, apiState) {
     AppState(contextState, coroutineScope, navController, navAppController, apiState)
 }
 
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun rememberAppContextState(
     contextState: Context = LocalContext.current.applicationContext,
     coroutineScope: CoroutineScope = rememberCoroutineScope(),
-    navController: NavHostController = rememberNavController(),
+    navController: NavHostController = rememberAnimatedNavController(),
 ) = remember(contextState, coroutineScope, navController) {
     AppContextState(contextState, coroutineScope, navController)
 }

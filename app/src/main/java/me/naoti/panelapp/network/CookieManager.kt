@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import me.naoti.panelapp.R
 import android.content.Context
 import android.content.SharedPreferences
+import me.naoti.panelapp.network.CookieSenderInterceptor.Companion.COOKIE_KEY
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.Response
