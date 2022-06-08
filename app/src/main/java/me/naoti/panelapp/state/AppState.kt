@@ -2,13 +2,12 @@ package me.naoti.panelapp.state
 
 import android.content.Context
 import android.content.res.Configuration
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
-import com.google.accompanist.navigation.animation.rememberAnimatedNavController
+import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.CoroutineScope
 import me.naoti.panelapp.R
 import me.naoti.panelapp.builder.getMoshi
@@ -142,24 +141,22 @@ class AppState (
     }
 }
 
-@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun rememberAppState(
     contextState: Context = LocalContext.current.applicationContext,
     coroutineScope: CoroutineScope = rememberCoroutineScope(),
-    navController: NavHostController = rememberAnimatedNavController(),
-    navAppController: NavHostController = rememberAnimatedNavController(),
+    navController: NavHostController = rememberNavController(),
+    navAppController: NavHostController = rememberNavController(),
     apiState: ApiRoutes = rememberApiState(),
 ) = remember(contextState, coroutineScope, navController, navAppController, apiState) {
     AppState(contextState, coroutineScope, navController, navAppController, apiState)
 }
 
-@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun rememberAppContextState(
     contextState: Context = LocalContext.current.applicationContext,
     coroutineScope: CoroutineScope = rememberCoroutineScope(),
-    navController: NavHostController = rememberAnimatedNavController(),
+    navController: NavHostController = rememberNavController(),
 ) = remember(contextState, coroutineScope, navController) {
     AppContextState(contextState, coroutineScope, navController)
 }
