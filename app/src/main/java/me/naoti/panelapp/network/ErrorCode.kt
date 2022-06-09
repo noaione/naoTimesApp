@@ -98,6 +98,14 @@ enum class ErrorCode(val actual: Int, val alias: Int? = null, val customMsg: Str
         override fun asText() = "The specified episode cannot be found in the project!"
         override fun asText(extra: String) = "Episode $extra cannot be found in the project!"
     },
+    ChannelFetchFailed(4400) {
+        override fun asText() = "Failed to fetch channel from your server!"
+        override fun asText(extra: String) = "Failed to fetch channel $extra from your server!"
+    },
+    ChannelsFetchFailed(4401) {
+        override fun asText() = "Failed to fetch channels from your server!"
+        override fun asText(extra: String) = "Failed to fetch channels from your server!"
+    },
 
     DatabaseUpdateFailed(4500) {
         override fun asText() = "Failed to update main database!"
