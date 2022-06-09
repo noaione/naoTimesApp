@@ -41,11 +41,10 @@ import kotlinx.coroutines.launch
 import me.naoti.panelapp.R
 import me.naoti.panelapp.network.ApiRoutes
 import me.naoti.panelapp.network.ErrorCode
-import me.naoti.panelapp.network.models.SettingsAdjustName
-import me.naoti.panelapp.network.models.SettingsAdjustPassword
-import me.naoti.panelapp.network.models.UserInfoModel
+import me.naoti.panelapp.network.models.*
 import me.naoti.panelapp.state.AppState
 import me.naoti.panelapp.ui.ScreenItem
+import me.naoti.panelapp.ui.components.NetworkSearch
 import me.naoti.panelapp.ui.popUpToTop
 import me.naoti.panelapp.ui.preferences.DarkModeOverride
 import me.naoti.panelapp.ui.preferences.UserSettings
@@ -203,10 +202,193 @@ fun DarkModeToggle(
     }
 }
 
-private fun getActualName(name: String?): String {
+data class AnnouncerDelegatedResult(
+    val content: ChannelFindResult,
+) {
+    override fun toString(): String {
+        return content.asText()
+    }
+}
+
+private fun getOrNotSet(name: String?): String {
     if (name == null) return "Not Set"
     if (name.isEmpty()) return "Not Set"
     return name
+}
+
+@Composable
+fun AnnouncerSearch(
+    appState: AppState,
+    onItemSelect: (AnnouncerDelegatedResult) -> Unit,
+    onCleared: () -> Unit,
+    enabled: Boolean = true,
+    isError: Boolean = false,
+) {
+    val log = getLogger("AnnouncerChangeSearch")
+    val currentFindings = remember { mutableStateListOf<AnnouncerDelegatedResult>() }
+    var isLoading by remember {
+        mutableStateOf(false)
+    }
+    LaunchedEffect(key1 = true) {
+        appState.coroutineScope.launch {
+            isLoading = true
+            log.i("Searching to API...")
+            when (val result = appState.apiState.getServerChannels()) {
+                is NetworkResponse.Success -> {
+                    if (result.body.success) {
+                        log.i("Success, setting to currentFindings")
+                        currentFindings.clear()
+                        result.body.results.forEach { item ->
+                            currentFindings.add(AnnouncerDelegatedResult(item))
+                        }
+                    } else {
+                        log.e("Failed for some reason...?")
+                        Toast.makeText(
+                            appState.contextState,
+                            "Unable to fetch server list!",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
+                is NetworkResponse.Error -> {
+                    var errMsg = result.error.toString()
+                    if (result.body != null) {
+                        errMsg = result.body?.code?.asText() ?: ErrorCode.UnknownError.asText()
+                    }
+                    result.error?.let { log.e(it.stackTraceToString()) }
+                    Toast.makeText(
+                        appState.contextState,
+                        errMsg,
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+            isLoading = false
+        }
+    }
+    NetworkSearch(
+        items = currentFindings,
+        itemContent = { item ->
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(4.dp)
+            ) {
+                Text(
+                    text = item.content.asText(),
+                    modifier = Modifier
+                        .padding(4.dp)
+                        .wrapContentWidth(Alignment.Start)
+                )
+            }
+        },
+        isInitializing = isLoading,
+        onItemSelected = onItemSelect,
+        onFilterResult = { items, query ->
+            if (query.isEmpty()) {
+                log.w("Query empty, resetting to default items count: ${items.count()}")
+                items
+            } else {
+                log.i("Filtering with: $query")
+                items.filter { item ->
+                    item.content.id.contains(query, ignoreCase = true) ||
+                            item.content.name.contains(query, ignoreCase = true)
+                }
+            }
+        },
+        onCleared = onCleared,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(2.dp),
+        enabled = enabled,
+        isError = isError,
+    )
+}
+
+@Composable
+fun AnnouncerChangeModule(
+    appState: AppState,
+    user: UserInfoModel,
+    onInfoUpdate: ((UserInfoModel) -> Unit)? = null
+) {
+    var userState by remember { mutableStateOf(user) }
+    var isSubmitting by remember { mutableStateOf(false) }
+    var selectedMatch by remember { mutableStateOf<ChannelFindResult?>(null) }
+    val log = getLogger("AnnouncerChangeModule")
+
+    BoxedSettings {
+        Text(text = "Announcement Channel", fontWeight = FontWeight.SemiBold, fontSize = 16.sp, letterSpacing = 0.sp)
+        Text(text = getOrNotSet(userState.announceChannel), fontSize = 13.sp, letterSpacing = 0.sp)
+        Spacer(modifier = Modifier.height(4.dp))
+        AnnouncerSearch(
+            appState = appState,
+            onItemSelect = { item ->
+                selectedMatch = item.content
+            },
+            onCleared = {
+                selectedMatch = null
+            },
+            enabled = !isSubmitting
+        )
+        Button(
+            modifier = Modifier
+                .testTag("SettingsSetChannelBtn")
+                .padding(
+                    vertical = 2.dp
+                )
+                .fillMaxWidth(),
+            enabled = !isSubmitting,
+            onClick = {
+                isSubmitting = true
+                appState.coroutineScope.launch {
+                    log.i("Changing channel to $selectedMatch")
+                    val adjustAnnouncer = SettingsAdjustAnnouncer(
+                        channelId = selectedMatch?.id ?: "",
+                        toRemove = selectedMatch == null,
+                    )
+                    when (val result = appState.apiState.updateAnnoucer(adjustAnnouncer)) {
+                        is NetworkResponse.Success -> {
+                            if (result.body.success) {
+                                log.i("Success, using new announcer state!")
+                                val newUserState = userState.rebuild(
+                                    announceChannel = selectedMatch?.id
+                                )
+                                userState = newUserState
+                                if (onInfoUpdate != null) {
+                                    onInfoUpdate(newUserState)
+                                }
+                            } else {
+                                val code = result.body.code ?: ErrorCode.UnknownError
+                                log.e("Failed to change for some reason: ${code.asText()}")
+                                Toast.makeText(
+                                    appState.contextState,
+                                    code.asText(),
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                        }
+                        is NetworkResponse.Error -> {
+                            var errMsg = result.error.toString()
+                            if (result.body != null) {
+                                val code = result.body!!.code ?: ErrorCode.UnknownError
+                                errMsg = code.asText()
+                            }
+                            log.e("Failed to change for some reason: $errMsg")
+                            result.error?.let { log.e(it.stackTraceToString()) }
+                            Toast.makeText(
+                                appState.contextState,
+                                errMsg,
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                    }
+                    isSubmitting = false
+                }
+            }
+        ) {
+            Text(text = "Set Channel")
+        }
+    }
 }
 
 @Composable
@@ -215,7 +397,7 @@ fun NameChangeModule(
     apiState: ApiRoutes,
     coroScope: CoroutineScope,
     user: UserInfoModel,
-    onInfoUpdate: ((UserInfoModel) -> Unit)?
+    onInfoUpdate: ((UserInfoModel) -> Unit)? = null
 ) {
     var showDialog by remember { mutableStateOf(false) }
     var userState by remember { mutableStateOf(user) }
@@ -229,7 +411,7 @@ fun NameChangeModule(
         }
     ) {
         Text(text = "Name", fontWeight = FontWeight.SemiBold, fontSize = 16.sp, letterSpacing = 0.sp)
-        Text(text = getActualName(userState.name), fontSize = 13.sp, letterSpacing = 0.sp)
+        Text(text = getOrNotSet(userState.name), fontSize = 13.sp, letterSpacing = 0.sp)
     }
 
     if (showDialog) {
@@ -702,11 +884,20 @@ fun SettingsScreen(appState: AppState, userSettings: UserSettings) {
 
             Spacer(modifier = Modifier.height(8.dp))
             TextHead(text = "Server")
-            BoxedSettings {
-                Text(text = "Announcement Channel", fontWeight = FontWeight.SemiBold, fontSize = 16.sp, letterSpacing = 0.sp)
-                Text(text = userInfo.announceChannel ?: "Not Set", fontSize = 13.sp, letterSpacing = 0.sp)
+            AnnouncerChangeModule(appState = appState, user = userInfo) { newUser ->
+                appState.setCurrentUser(newUser)
+                userInfo = newUser
             }
 
+            Divider(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(
+                        top = 4.dp,
+                        start = 20.dp,
+                        end = 20.dp,
+                    )
+            )
             Spacer(modifier = Modifier.height(8.dp))
             LogoutButton(appState, modifier = Modifier.padding(4.dp))
         }

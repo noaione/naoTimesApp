@@ -27,6 +27,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import me.naoti.panelapp.network.ApiService
 import me.naoti.panelapp.utils.getLogger
+import java.security.InvalidParameterException
 
 abstract class SearchDebouncer<T>(
     val context: Context,
@@ -61,21 +62,40 @@ abstract class SearchDebouncer<T>(
 fun <T> NetworkSearch(
     items: List<T>,
     itemContent: @Composable (T) -> Unit,
-    searchDebouncer: SearchDebouncer<T>,
     onItemSelected: (T) -> Unit,
     modifier: Modifier = Modifier,
+    searchDebouncer: (SearchDebouncer<T>)? = null,
+    onFilterResult: ((List<T>, String) -> List<T>)? = null,
     onCleared: (() -> Unit)? = null,
     enabled: Boolean = true,
     isError: Boolean = false,
+    isInitializing: Boolean = false,
 ) {
+    val log = getLogger("NetworkSearch")
+    if (searchDebouncer == null && onFilterResult == null) {
+        throw InvalidParameterException(
+            "NetworkSearch should receive either search debouncer or onFilterResult or even both to works!"
+        )
+    }
+    var itemsFound by remember { mutableStateOf(items) }
+    log.i("Initial items: ${items.count()}")
+    log.i("Items in dataset: ${itemsFound.count()}")
     var value by remember { mutableStateOf("") }
     var isFocus by remember {
         mutableStateOf(false)
     }
-    var itemsFound by remember { mutableStateOf(items) }
-    searchDebouncer.onSearchResult = { results, query ->
-        itemsFound = results
-        value = query
+    log.i("Using debouncer? ${searchDebouncer != null}")
+    log.i("Using filter? ${onFilterResult != null}")
+    log.i("Is focusing? $isFocus")
+    if (searchDebouncer != null) {
+        searchDebouncer.onSearchResult = { results, query ->
+            itemsFound = if (onFilterResult != null) {
+                onFilterResult(results, query)
+            } else {
+                results
+            }
+            value = query
+        }
     }
     val view = LocalView.current
     Column(
@@ -93,7 +113,11 @@ fun <T> NetworkSearch(
             onValueChange = { query ->
                 if (enabled) {
                     value = query
-                    searchDebouncer.submitSearch(query)
+                    if (searchDebouncer != null) {
+                        searchDebouncer.submitSearch(query)
+                    } else if (onFilterResult != null) {
+                        itemsFound = onFilterResult(items, query)
+                    }
                 }
             },
             label = { Text(text = "Search...") },
@@ -104,7 +128,8 @@ fun <T> NetworkSearch(
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    if (searchDebouncer.isSearching) {
+                    val validSearching = isInitializing || (searchDebouncer?.isSearching ?: false)
+                    if (validSearching) {
                         DotsFlashing(8.dp)
                     }
                     IconButton(onClick = {
@@ -128,6 +153,7 @@ fun <T> NetworkSearch(
             enabled = enabled
         )
         AnimatedVisibility(visible = isFocus) {
+            log.i("Rendering lazy column items...")
             LazyColumn(
                 modifier = Modifier
                     .fillMaxWidth()

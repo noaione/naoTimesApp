@@ -31,7 +31,11 @@ data class SettingsAdjustPassword(
 data class ChannelFindResult(
     val id: String,
     val name: String
-)
+) {
+    fun asText(): String {
+        return "#$id ($name)"
+    }
+}
 
 data class SettingsChannelFindModel(
     val results: List<ChannelFindResult>,
