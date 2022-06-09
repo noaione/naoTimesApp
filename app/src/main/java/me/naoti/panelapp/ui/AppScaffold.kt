@@ -8,6 +8,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import me.naoti.panelapp.navigation.NavigationHost
@@ -27,7 +28,8 @@ fun ProjectAddButton(navController: NavController) {
         },
         modifier = Modifier
             .padding(6.dp)
-            .clip(RoundedCornerShape(6.dp)),
+            .clip(RoundedCornerShape(6.dp))
+            .testTag("FABAddProject"),
         contentColor = MaterialTheme.colorScheme.onSecondary,
         containerColor = MaterialTheme.colorScheme.secondary
     ) {

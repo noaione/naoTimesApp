@@ -137,6 +137,7 @@ fun DeleteDialog(
                         },
                         label = { Text("Enter paraphrase") },
                         enabled = enabled,
+                        singleLine = true
                     )
                 }
 
