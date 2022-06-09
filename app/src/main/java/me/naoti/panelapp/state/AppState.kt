@@ -121,9 +121,9 @@ class AppState (
     fun setCurrentUser(userInfo: UserInfoModel?) {
         if (userInfo == null) {
             contextState.getSharedPreferences(
-                    contextState.getString(R.string.app_name),
-                    Context.MODE_PRIVATE
-                )
+                contextState.getString(R.string.app_name),
+                Context.MODE_PRIVATE
+            )
                 .edit()
                 .remove(USER_CONTEXT)
                 .apply()
