@@ -78,6 +78,7 @@ open class AppContextState (
             Configuration.UI_MODE_NIGHT_UNDEFINED -> false
             else -> false
         }
+        if (darkOverride == DarkModeOverride.LightMode) return false
         return systemDark || darkOverride == DarkModeOverride.DarkMode
     }
 
