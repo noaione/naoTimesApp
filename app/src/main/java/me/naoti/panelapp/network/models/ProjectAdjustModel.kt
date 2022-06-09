@@ -22,7 +22,17 @@ data class ProjectAddModel(
 
 data class ProjectRemoveModel(
     val animeId: String,
-)
+) {
+    companion object {
+        fun fromProject(project: Project): ProjectRemoveModel {
+            return ProjectRemoveModel(animeId = project.id)
+        }
+
+        fun fromProject(project: ProjectInfoModel): ProjectRemoveModel {
+            return ProjectRemoveModel(animeId = project.id)
+        }
+    }
+}
 
 @JsonClass(generateAdapter = true)
 data class ProjectEpisodeChangeAdjustModel(

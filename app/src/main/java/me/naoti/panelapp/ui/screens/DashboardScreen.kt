@@ -74,7 +74,7 @@ suspend fun getAPIData(appState: AppState): APIResult {
 }
 
 @Composable
-fun DashboardScreen(appState: AppState, paddingValues: PaddingValues? = null) {
+fun DashboardScreen(appState: AppState, forceRefresh: Boolean = false) {
     val log = getLogger("DashboardScreenVIew")
     var ongoingProject by rememberSaveable { mutableStateOf<List<Project>>(listOf()) }
     val swipeState = rememberSwipeRefreshState(false)
@@ -86,23 +86,43 @@ fun DashboardScreen(appState: AppState, paddingValues: PaddingValues? = null) {
     LaunchedEffect(key1 = true) {
         if (!isInitialized) {
             appState.coroutineScope.launch {
-                if (!isInitialized) {
-                    loadingState = true
-                    log.i("Initializing data...")
-                    val apiRes = getAPIData(appState)
-                    ongoingProject = apiRes.ongoingProjects
-                    apiRes.dashboardInfo?.let { it ->
-                        it.forEach { v ->
-                            if (v.key == "ongoing") {
-                                ongoingCount = v.data
-                            } else if (v.key == "done") {
-                                finishedCount = v.data
-                            }
+                loadingState = true
+                log.i("Initializing data...")
+                val apiRes = getAPIData(appState)
+                ongoingProject = apiRes.ongoingProjects
+                apiRes.dashboardInfo?.let { it ->
+                    it.forEach { v ->
+                        if (v.key == "ongoing") {
+                            ongoingCount = v.data
+                        } else if (v.key == "done") {
+                            finishedCount = v.data
                         }
                     }
-                    log.i("Data initialized!")
-                    isInitialized = true
                 }
+                log.i("Data initialized!")
+                isInitialized = true
+            }
+            loadingState = false
+        }
+    }
+
+    if (forceRefresh && isInitialized) {
+        LaunchedEffect(key1 = true) {
+            appState.coroutineScope.launch {
+                loadingState = true
+                log.i("Force refreshing data...")
+                val apiRes = getAPIData(appState)
+                ongoingProject = apiRes.ongoingProjects
+                apiRes.dashboardInfo?.let { it ->
+                    it.forEach { v ->
+                        if (v.key == "ongoing") {
+                            ongoingCount = v.data
+                        } else if (v.key == "done") {
+                            finishedCount = v.data
+                        }
+                    }
+                }
+                log.i("Data forced refreshed!")
                 loadingState = false
             }
         }

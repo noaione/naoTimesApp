@@ -44,7 +44,7 @@ suspend fun getProjects(appState: AppState): List<ProjectListModel> {
 }
 
 @Composable
-fun ProjectsScreen(appState: AppState) {
+fun ProjectsScreen(appState: AppState, forceRefresh: Boolean = false) {
     val log = getLogger("ProjectsView")
 
     var projectsList by rememberSaveable { mutableStateOf<List<ProjectListModel>>(listOf()) }
@@ -61,6 +61,18 @@ fun ProjectsScreen(appState: AppState) {
                 isInit = true
             }
             loadingState = false
+        }
+    }
+
+    if (forceRefresh && isInit) {
+        LaunchedEffect(key1 = true) {
+            appState.coroutineScope.launch {
+                loadingState = true
+                log.i("Force refreshing data...")
+                projectsList = getProjects(appState)
+                log.i("Data forced refreshed!")
+                loadingState = false
+            }
         }
     }
 

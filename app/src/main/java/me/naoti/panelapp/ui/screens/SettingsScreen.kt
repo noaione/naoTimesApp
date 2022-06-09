@@ -12,11 +12,12 @@ import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import me.naoti.panelapp.state.AppState
 import me.naoti.panelapp.ui.ScreenItem
+import me.naoti.panelapp.ui.popUpToTop
 import me.naoti.panelapp.ui.theme.darker
 import me.naoti.panelapp.utils.getLogger
 
 @Composable
-fun LogoutButton(appState: AppState, modifier: Modifier = Modifier) {
+fun LogoutButton(appState: AppState, modifier: Modifier = Modifier, dryRun: Boolean = false) {
     val log = getLogger("LogoutButton")
     Button(
         modifier = modifier.testTag("LogOutButton"),
@@ -24,27 +25,20 @@ fun LogoutButton(appState: AppState, modifier: Modifier = Modifier) {
             log.i("Logging out...")
             appState.coroutineScope.launch {
                 // ignore everything
-                log.i("Setting current user to null")
-                appState.setCurrentUser(null)
-                log.i("Sending logout request to API...")
-                appState.apiState.logoutUser()
-                // clear navigation back stack
-                log.i("Removing navigation back stack queue...")
-                try {
-                    appState.navAppController.backQueue.clear()
-                } catch (e: Exception) {
-                    log.e("Failed to pop up navAppController, ignoring...")
+                if (!dryRun) {
+                    log.i("Setting current user to null")
+                    appState.setCurrentUser(null)
+                    log.i("Sending logout request to API...")
+                    appState.apiState.logoutUser()
+                    // clear navigation back stack
+                    log.i("Clearing user cookies...")
+                    appState.clearUserCookie()
                 }
-                try {
-                    appState.navController.backQueue.clear()
-                } catch (e: Exception) {
-                    log.e("Failed to pop up navController, ignoring...")
-                }
-                log.i("Clearing user cookies...")
-                appState.clearUserCookie()
                 // enter login screen
                 log.i("Navigating back to login screen")
-                appState.navController.navigate(ScreenItem.LoginScreen.route)
+                appState.navController.navigate(ScreenItem.LoginScreen.route) {
+                    popUpToTop(appState.navController)
+                }
             }
         },
         colors = ButtonDefaults.buttonColors(
@@ -54,13 +48,13 @@ fun LogoutButton(appState: AppState, modifier: Modifier = Modifier) {
             disabledContentColor = MaterialTheme.colorScheme.onErrorContainer.darker(0.2f)
         )
     ) {
-        Text(text = "Logout")
+        Text(text = "Logout${if (dryRun) " (Dry)" else " "}")
     }
 }
 
 @Composable
 fun SettingsScreen(appState: AppState) {
-    val log = getLogger("SettingsScreen")
+//    val log = getLogger("SettingsScreen")
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -69,5 +63,6 @@ fun SettingsScreen(appState: AppState) {
             )
     ) {
         LogoutButton(appState, modifier = Modifier.padding(4.dp))
+        LogoutButton(appState, modifier = Modifier.padding(4.dp), dryRun = true)
     }
 }

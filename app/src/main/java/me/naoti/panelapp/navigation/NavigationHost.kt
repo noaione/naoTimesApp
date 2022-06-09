@@ -6,9 +6,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import me.naoti.panelapp.state.AppState
 import me.naoti.panelapp.ui.screens.*
 import me.naoti.panelapp.utils.getLogger
+import me.naoti.panelapp.utils.mapBoolean
 
 @Composable
 fun NavigationHost(appState: AppState, paddingValues: PaddingValues) {
@@ -20,12 +22,20 @@ fun NavigationHost(appState: AppState, paddingValues: PaddingValues) {
         Modifier.padding(paddingValues)
     ) {
         // Main screen
-        composable(NavigationItem.Dashboard.route) {
-            log.i("Entering route: ${NavigationItem.Dashboard.route}")
-            DashboardScreen(appState)
+        composable(
+            NavigationItem.Dashboard.route,
+            arguments = listOf(navArgument("refresh") {defaultValue = "false"})
+        ) { backStack ->
+            val forceRefresh = mapBoolean(backStack.arguments?.getString("refresh"))
+            log.i("Entering route: ${NavigationItem.Dashboard.route} [refresh=$forceRefresh]")
+            DashboardScreen(appState, forceRefresh)
         }
-        composable(NavigationItem.Projects.route) {
-            log.i("Entering route: ${NavigationItem.Projects.route}")
+        composable(
+            NavigationItem.Projects.route,
+            arguments = listOf(navArgument("refresh") {defaultValue = "false"})
+        ) { backStack ->
+            val forceRefresh = mapBoolean(backStack.arguments?.getString("refresh"))
+            log.i("Entering route: ${NavigationItem.Projects.route} [refresh=$forceRefresh]")
             ProjectsScreen(appState)
         }
         composable(NavigationItem.Settings.route) {
