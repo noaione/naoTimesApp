@@ -23,7 +23,7 @@ class UserSettingsImpl(
         "naotimes_dark_mode_override", DarkModeOverride.FollowSystem
     )
     override val refreshStream: MutableStateFlow<Boolean>
-    override var refresh: Boolean by RefreshStateDelegate(
+    override var refresh: Boolean by BooleanPreferencesDelegate(
         "naotimes_force_refresh_view", false
     )
 
@@ -51,8 +51,7 @@ class UserSettingsImpl(
         }
     }
 
-
-    inner class RefreshStateDelegate(
+    inner class BooleanPreferencesDelegate(
         private val name: String,
         private val default: Boolean,
     ) : ReadWriteProperty<Any?, Boolean> {
