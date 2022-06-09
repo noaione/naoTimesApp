@@ -515,8 +515,11 @@ fun ProjectAddScreen(appState: AppState) {
                                         "{projectId}", selectedAnime!!.id.toString()
                                     )
                                     appState.navController.navigate(navRoute) {
-                                        popUpTo(ScreenItem.ProjectScreen.route) {
-                                            inclusive = true
+                                        val navTarget = appState.navController.currentDestination
+                                        if (navTarget != null) {
+                                            popUpTo(navTarget.id) {
+                                                inclusive = true
+                                            }
                                         }
                                     }
                                 } else {
