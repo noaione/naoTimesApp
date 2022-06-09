@@ -18,6 +18,18 @@ import me.naoti.panelapp.network.CookieSenderInterceptor
 import me.naoti.panelapp.network.models.ProjectInfoModel
 import kotlin.time.Duration.Companion.minutes
 
+enum class DarkModeOverride(val mode: Int) {
+    FollowSystem(-1),
+    LightMode(0),
+    DarkMode(1);
+
+    companion object {
+        fun fromInt(value: Int): DarkModeOverride? {
+            return values().firstOrNull { value == it.mode }
+        }
+    }
+}
+
 open class AppContextState (
     val contextState: Context,
     val coroutineScope: CoroutineScope,
@@ -49,12 +61,14 @@ open class AppContextState (
     }
 
     fun isDarkMode(): Boolean {
-        val forceDark = contextState
+        val darkPrefs = contextState
             .getSharedPreferences(
                 contextState.getString(R.string.app_name),
                 Context.MODE_PRIVATE
             )
-            .getBoolean(DARK_MODE_CONTEXT, false)
+            .getInt(DARK_MODE_CONTEXT, 0)
+
+        val darkOverride = DarkModeOverride.fromInt(darkPrefs) ?: DarkModeOverride.FollowSystem
 
         val systemDark = when (
             contextState.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
@@ -64,22 +78,33 @@ open class AppContextState (
             Configuration.UI_MODE_NIGHT_UNDEFINED -> false
             else -> false
         }
-        return systemDark || forceDark
+        return systemDark || darkOverride == DarkModeOverride.DarkMode
     }
 
-    fun setDarkMode(forceDark: Boolean = false) {
+    fun getDarkMode(): DarkModeOverride {
+        val darkPrefs = contextState
+            .getSharedPreferences(
+                contextState.getString(R.string.app_name),
+                Context.MODE_PRIVATE
+            )
+            .getInt(DARK_MODE_CONTEXT, 0)
+
+        return DarkModeOverride.fromInt(darkPrefs) ?: DarkModeOverride.FollowSystem
+    }
+
+    fun setDarkMode(darkMode: DarkModeOverride) {
         contextState
             .getSharedPreferences(
                 contextState.getString(R.string.app_name),
                 Context.MODE_PRIVATE
             )
             .edit()
-            .putBoolean(DARK_MODE_CONTEXT, forceDark)
+            .putInt(DARK_MODE_CONTEXT, darkMode.mode)
             .apply()
     }
 
     companion object {
-        const val DARK_MODE_CONTEXT = "naotimes_force_dark_mode"
+        const val DARK_MODE_CONTEXT = "naotimes_dark_mode_override"
     }
 }
 
