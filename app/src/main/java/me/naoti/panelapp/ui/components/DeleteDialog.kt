@@ -128,8 +128,7 @@ fun DeleteDialog(
                     OutlinedTextField(
                         modifier = Modifier
                             .padding(top = 8.dp)
-                            .testTag("DeleteDialogParaphraseInput")
-                            .clip(RoundedCornerShape(6.dp)),
+                            .testTag("DeleteDialogParaphraseInput"),
                         value = zaWaurdo,
                         onValueChange = {
                             zaWaurdo = it
@@ -137,7 +136,8 @@ fun DeleteDialog(
                         },
                         label = { Text("Enter paraphrase") },
                         enabled = enabled,
-                        singleLine = true
+                        singleLine = true,
+                        shape = RoundedCornerShape(6.dp),
                     )
                 }
 

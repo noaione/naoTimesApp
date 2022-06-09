@@ -366,8 +366,8 @@ fun ProjectScreen(appState: AppState, projectId: String?, clickSource: String) {
                             modifier = Modifier
                                 .padding(top = 8.dp, start = 4.dp, end = 4.dp)
                                 .fillMaxWidth()
-                                .testTag("ProjectModifyEpisodeAddCount")
-                                .clip(RoundedCornerShape(6.dp)),
+                                .testTag("ProjectModifyEpisodeAddCount"),
+                            shape = RoundedCornerShape(6.dp),
                             value = episodeAddCount,
                             onValueChange = {
                                 if (it.text.isEmpty()) {
