@@ -86,7 +86,7 @@ enum class ErrorCode(val actual: Int, val alias: Int? = null, val customMsg: Str
         override fun asText() = "Project not found!"
         override fun asText(extra: String) = "Project $extra not found!"
     },
-    MissingEpisodeRemove(4300) {
+    MissingEpisodeRemove(4302) {
         override fun asText() = "There is no episode to be removed!"
         override fun asText(extra: String) = "There is no episode to be removed!"
     },
