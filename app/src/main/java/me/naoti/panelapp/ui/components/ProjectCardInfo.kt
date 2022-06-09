@@ -213,6 +213,8 @@ fun ProjectCardInfo(project: ProjectInfoModel, appState: AppState, sourcePage: S
                                     errMsg,
                                     Toast.LENGTH_SHORT
                                 ).show()
+                                openDialog = false
+                                isDeleting = false
                             }
                         }
                         is NetworkResponse.Error -> {
@@ -230,10 +232,10 @@ fun ProjectCardInfo(project: ProjectInfoModel, appState: AppState, sourcePage: S
                                 errMsg,
                                 Toast.LENGTH_SHORT
                             ).show()
+                            openDialog = false
+                            isDeleting = false
                         }
                     }
-                    isDeleting = false
-                    openDialog = false
                 }
             },
             onDismiss = {
