@@ -37,7 +37,6 @@ import me.naoti.panelapp.utils.getLogger
 @Composable
 fun EditableStaff(role: StatusRole, staff: AssignmentKeyValueProject, projectId: String, appCtx: AppState) {
     var editableState by remember { mutableStateOf(false) }
-    var submittingState by remember { mutableStateOf(false) }
     val mutableIdEdit = remember {
         mutableStateOf(TextFieldValue(staff.id ?: ""))
     }
@@ -47,9 +46,8 @@ fun EditableStaff(role: StatusRole, staff: AssignmentKeyValueProject, projectId:
     var oldState by remember { mutableStateOf(staff.id ?: "") }
     var mutableName by remember { mutableStateOf(staff.name ?: "Unknown") }
     val colors = getStatusColor(role)
-    val ROUND = RoundedCornerShape(4.dp)
+    val Round = RoundedCornerShape(4.dp)
     val log = getLogger("EditableStaff[${role.name}]")
-    val isDark = appCtx.isDarkMode()
 
     Column {
         Text(
@@ -58,7 +56,7 @@ fun EditableStaff(role: StatusRole, staff: AssignmentKeyValueProject, projectId:
                 fontWeight = FontWeight.Light,
                 fontSize = 10.sp,
                 letterSpacing = .5.sp,
-                color = MaterialTheme.colorScheme.secondary.darker(.3f)
+                color = MaterialTheme.colorScheme.secondary.darker(.1f)
             ),
             modifier = Modifier.padding(
                 horizontal = 10.dp,
@@ -70,7 +68,7 @@ fun EditableStaff(role: StatusRole, staff: AssignmentKeyValueProject, projectId:
                 .fillMaxWidth()
                 .padding(4.dp)
                 .height(40.dp)
-                .clip(ROUND),
+                .clip(Round),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             if (!editableState) {
@@ -101,7 +99,7 @@ fun EditableStaff(role: StatusRole, staff: AssignmentKeyValueProject, projectId:
                         .border(2.dp, colors.border)
                         .background(colors.bg)
                         .fillMaxWidth()
-                        .clip(ROUND),
+                        .clip(Round),
                 ) {
                     Text(
                         text = mutableName,
@@ -113,7 +111,7 @@ fun EditableStaff(role: StatusRole, staff: AssignmentKeyValueProject, projectId:
                                 vertical = 4.dp,
                                 horizontal = 8.dp,
                             )
-                            .clip(ROUND)
+                            .clip(Round)
                             .wrapContentWidth(Alignment.Start)
                     )
                 }
@@ -135,7 +133,6 @@ fun EditableStaff(role: StatusRole, staff: AssignmentKeyValueProject, projectId:
                                 // change something
                                 log.i("Changing to ${mutableIdEdit.value}")
                                 stateEnabled = false
-                                submittingState = true
                                 appCtx.coroutineScope.launch {
                                     val apiRes = appCtx.apiState.updateProjectStaff(
                                         ProjectAdjustStaffModel(
@@ -187,7 +184,6 @@ fun EditableStaff(role: StatusRole, staff: AssignmentKeyValueProject, projectId:
                                             )
                                         }
                                     }
-                                    submittingState = false
                                     stateEnabled = true
                                     editableState = false
                                 }
@@ -223,7 +219,7 @@ fun EditableStaff(role: StatusRole, staff: AssignmentKeyValueProject, projectId:
                         )
                         .fillMaxWidth()
                         .fillMaxHeight()
-                        .clip(ROUND),
+                        .clip(Round),
                     singleLine = true,
                     cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
                     textStyle = LocalTextStyle.current.copy(
