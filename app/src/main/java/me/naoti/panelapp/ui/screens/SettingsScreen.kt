@@ -18,15 +18,20 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -38,6 +43,7 @@ import com.haroldadmin.cnradapter.NetworkResponse
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import me.naoti.panelapp.Constants
 import me.naoti.panelapp.R
 import me.naoti.panelapp.network.ApiRoutes
 import me.naoti.panelapp.network.ErrorCode
@@ -783,6 +789,66 @@ fun TextHead(text: String) {
 }
 
 @Composable
+fun SettingsDebugBox(userInfo: UserInfoModel, cookieToken: String?) {
+    val context = LocalContext.current
+    BoxedSettings(
+        onClick = {
+            // for effect
+            val jsonData = buildString {
+                append("{\n\t")
+                append("\"version\": \"${Constants.APP_VERSION}\",")
+                append("\n\t")
+                append("\"hasCookie\": ${cookieToken != null},")
+                append("\n\t")
+                append("\"user\": {\n")
+                val uuid = if (userInfo.id != null) "\"${userInfo.id}\"" else "null"
+                append("\t\t\"id\": $uuid\n")
+                append("\t}\n")
+                append("}\n")
+            }
+            val clipboard = context.getSystemService(ClipboardManager::class.java)
+            val clip = ClipData.newPlainText("user debug data", jsonData)
+            clipboard.setPrimaryClip(clip)
+            Toast
+                .makeText(context, "Debug Copied!", Toast.LENGTH_SHORT)
+                .show()
+        }
+    ) {
+        Text(text = "Debug Info", fontWeight = FontWeight.SemiBold, fontSize = 16.sp, letterSpacing = 0.sp)
+        Text(
+            text = buildAnnotatedString {
+                withStyle(style = SpanStyle(fontWeight = FontWeight.SemiBold)) {
+                    append("Version:")
+                }
+                append(" ${Constants.APP_VERSION}")
+            },
+            fontSize = 13.sp,
+            letterSpacing = 0.sp
+        )
+        Text(
+            text = buildAnnotatedString {
+                withStyle(style = SpanStyle(fontWeight = FontWeight.SemiBold)) {
+                    append("Repository:")
+                }
+                append(" ${Constants.APP_REPO}")
+            },
+            fontSize = 13.sp,
+            letterSpacing = 0.sp
+        )
+        if (cookieToken != null) {
+            Text(
+                text = cookieToken,
+                fontSize = 11.sp,
+                letterSpacing = 0.sp,
+                lineHeight = 12.sp,
+                fontFamily = FontFamily.Monospace,
+                modifier = Modifier.padding(top = 1.dp)
+            )
+        }
+    }
+}
+
+@Composable
 fun SettingsScreen(appState: AppState, userSettings: UserSettings) {
     var userInfo by remember { mutableStateOf(appState.getCurrentUser()!!) }
     val swipeState = rememberSwipeRefreshState(false)
@@ -797,9 +863,11 @@ fun SettingsScreen(appState: AppState, userSettings: UserSettings) {
                 .zIndex(99f)
         )
     } else {
-        Spacer(modifier = Modifier
-            .height(4.dp)
-            .zIndex(99f))
+        Spacer(
+            modifier = Modifier
+                .height(4.dp)
+                .zIndex(99f)
+        )
     }
 
     SwipeRefresh(
@@ -901,6 +969,18 @@ fun SettingsScreen(appState: AppState, userSettings: UserSettings) {
             )
             Spacer(modifier = Modifier.height(8.dp))
             LogoutButton(appState, modifier = Modifier.padding(4.dp))
+            Divider(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(
+                        top = 4.dp,
+                        start = 20.dp,
+                        end = 20.dp,
+                    )
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            SettingsDebugBox(userInfo = userInfo, cookieToken = appState.getUserCookie())
+            Spacer(modifier = Modifier.height(2.dp))
         }
     }
 }

@@ -142,6 +142,22 @@ class AppState (
             .apply()
     }
 
+    fun getUserCookie(): String? {
+        val cookies = contextState
+            .getSharedPreferences(
+                contextState.getString(R.string.app_name),
+                Context.MODE_PRIVATE
+            )
+            .getStringSet(CookieSenderInterceptor.COOKIE_KEY, HashSet<String>()) as HashSet<String>
+        var selected = cookies.firstOrNull {
+            it.startsWith("ntwebui/iron/token=")
+        }
+        if (selected != null) {
+            selected = selected.substringAfter("ntwebui/iron/token=").split("; ").first()
+        }
+        return selected
+    }
+
     fun clearUserCookie() {
         contextState
             .getSharedPreferences(
