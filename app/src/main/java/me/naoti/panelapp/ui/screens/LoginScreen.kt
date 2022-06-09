@@ -21,24 +21,22 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
-import androidx.navigation.NavHostController
 import com.haroldadmin.cnradapter.NetworkResponse
 import kotlinx.coroutines.launch
 import me.naoti.panelapp.R
 import me.naoti.panelapp.network.ErrorCode
 import me.naoti.panelapp.network.models.LoginModel
-import me.naoti.panelapp.state.rememberAppState
+import me.naoti.panelapp.state.AppState
 import me.naoti.panelapp.ui.ScreenItem
 import me.naoti.panelapp.utils.getLogger
 
 @Composable
 fun PasswordInput(
     text: String,
+    modifier: Modifier = Modifier,
     onPasswordChange: ((String) -> Unit)? = null,
     enabled: Boolean = true,
     isError: Boolean = false,
-    @SuppressLint("ModifierParameter") modifier: Modifier = Modifier,
 ) {
     var passwordData by rememberSaveable(stateSaver = TextFieldValue.Saver) {
         mutableStateOf(TextFieldValue(text))
@@ -102,9 +100,9 @@ internal fun validateLoginInput(username: String, password: String): Pair<String
 }
 
 @Composable
-fun LoginScreen(navController: NavController) {
-    val context = rememberAppState(navController = navController as NavHostController)
+fun LoginScreen(context: AppState) {
     val log = getLogger("LoginScreenActivity")
+    log.i("Resetting navAppController since we reach login compose")
     var allowMutate by rememberSaveable { mutableStateOf(true) }
     var usernameData by rememberSaveable(stateSaver = TextFieldValue.Saver) { mutableStateOf(TextFieldValue("")) }
     var passwordData by rememberSaveable { mutableStateOf("") }
@@ -122,7 +120,9 @@ fun LoginScreen(navController: NavController) {
     }
 
     Column(
-        modifier = Modifier.padding(20.dp).wrapContentSize(Alignment.Center),
+        modifier = Modifier
+            .padding(20.dp)
+            .wrapContentSize(Alignment.Center),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -198,8 +198,8 @@ fun LoginScreen(navController: NavController) {
                                             val userInfo = userState.body
                                             if (userInfo.loggedIn) {
                                                 context.setCurrentUser(userInfo)
-                                                navController.navigate(ScreenItem.AppScaffold.route) {
-                                                    popUpTo(navController.graph.startDestinationId)
+                                                context.navController.navigate(ScreenItem.AppScaffold.route) {
+                                                    popUpTo(context.navController.graph.startDestinationId)
                                                     launchSingleTop = true
                                                 }
                                             } else {
@@ -291,8 +291,8 @@ fun LoginScreen(navController: NavController) {
                 .align(Alignment.CenterHorizontally),
             onClick = {
                 if (allowMutate) {
-                    navController.navigate(ScreenItem.RegisterScreen.route) {
-                        popUpTo(navController.graph.startDestinationId)
+                    context.navController.navigate(ScreenItem.RegisterScreen.route) {
+                        popUpTo(context.navController.graph.startDestinationId)
                         launchSingleTop = true
                     }
                 }

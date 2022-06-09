@@ -172,14 +172,15 @@ fun DashboardScreen(appState: AppState, forceRefresh: Boolean = false) {
             }
         }
     ) {
-        Column(modifier = Modifier
-            .fillMaxSize()
-            .padding(
-                start = 20.dp,
-                end = 20.dp,
-                top = 0.dp,
-            )
-            .verticalScroll(rememberScrollState())
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(
+                    start = 20.dp,
+                    end = 20.dp,
+                    top = 0.dp,
+                )
+                .verticalScroll(rememberScrollState())
         ) {
             Spacer(modifier = Modifier.height(20.dp))
             Text(

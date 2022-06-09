@@ -11,6 +11,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import me.naoti.panelapp.navigation.NavigationHost
 import me.naoti.panelapp.state.AppState
 import me.naoti.panelapp.ui.components.BottomNavigationBar
@@ -41,17 +42,18 @@ fun ProjectAddButton(navController: NavController) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppScaffold(appState: AppState, userSettings: UserSettings) {
+    val navController = rememberNavController()
     Scaffold(
         topBar = {
             TopBar()
         },
         bottomBar = {
-            BottomNavigationBar(appState.navAppController)
+            BottomNavigationBar(navController)
         },
         floatingActionButton = {
             ProjectAddButton(appState.navController)
         }
     ) { padVal ->
-        NavigationHost(appState, padVal, userSettings)
+        NavigationHost(appState, navController, padVal, userSettings)
     }
 }

@@ -42,8 +42,7 @@ class MainActivity : ComponentActivity() {
                 DarkModeOverride.FollowSystem -> isSystemInDarkTheme()
             }
             val navController = rememberNavController()
-            val navMainController = rememberNavController()
-            val appState = rememberAppState(navController = navController, navAppController = navMainController)
+            val appState = rememberAppState(navController = navController)
             NaoTimesTheme(darkTheme = useDarkColors) {
                 NaoTimesView(appState = appState, userSettings = userSettings)
             }
@@ -71,7 +70,7 @@ fun NaoTimesView(appState: AppState, userSettings: UserSettings) {
             composable(
                 ScreenItem.LoginScreen.route,
             ) {
-                LoginScreen(appState.navController)
+                LoginScreen(appState)
             }
             composable(
                 ScreenItem.RegisterScreen.route,

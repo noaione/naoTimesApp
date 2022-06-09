@@ -11,18 +11,23 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import me.naoti.panelapp.navigation.NavigationItem
 import me.naoti.panelapp.ui.theme.*
+import me.naoti.panelapp.utils.getLogger
 
 
 @Composable
 fun BottomNavigationBar(navController: NavController) {
+    val log = getLogger("BottomNavigationBar")
+    log.i("Initiating navigation bar...")
     val items = listOf(
         NavigationItem.Dashboard,
         NavigationItem.Projects,
         NavigationItem.Settings
     )
     NavigationBar {
+        log.i("Preparing back stack entry...")
         val navBackStackEntry by navController.currentBackStackEntryAsState()
         val currentRoute = navBackStackEntry?.destination?.route
+        log.i("Creating navigqation item")
         items.forEach { item ->
             NavigationBarItem(
                 icon = { Icon(painterResource(id = item.icon), contentDescription = item.title) },

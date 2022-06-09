@@ -46,6 +46,7 @@ import me.naoti.panelapp.ui.ScreenItem
 import me.naoti.panelapp.ui.components.NetworkSearch
 import me.naoti.panelapp.ui.components.SearchDebouncer
 import me.naoti.panelapp.ui.components.StatusRole
+import me.naoti.panelapp.ui.popUpToTop
 import me.naoti.panelapp.ui.theme.Green500
 import me.naoti.panelapp.ui.theme.darker
 import me.naoti.panelapp.utils.getLogger
@@ -495,7 +496,7 @@ fun ProjectAddScreen(appState: AppState) {
                             delay(1500L)
                             isSubmitting = false
                             appState.navController.navigate(ScreenItem.LoginScreen.route) {
-                                appState.navController.backQueue.clear()
+                                popUpToTop(appState.navController)
                                 launchSingleTop = true
                             }
                             return@launch

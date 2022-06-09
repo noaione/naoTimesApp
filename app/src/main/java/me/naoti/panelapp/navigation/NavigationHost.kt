@@ -4,6 +4,8 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
@@ -14,11 +16,11 @@ import me.naoti.panelapp.utils.getLogger
 import me.naoti.panelapp.utils.mapBoolean
 
 @Composable
-fun NavigationHost(appState: AppState, paddingValues: PaddingValues, userSettings: UserSettings) {
+fun NavigationHost(appState: AppState, navController: NavController, paddingValues: PaddingValues, userSettings: UserSettings) {
     val log = getLogger("NavigationMain")
     log.i("Creating navigation host")
     NavHost(
-        navController = appState.navAppController,
+        navController = navController as NavHostController,
         startDestination = NavigationItem.Dashboard.route,
         Modifier.padding(paddingValues)
     ) {

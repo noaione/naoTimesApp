@@ -99,8 +99,10 @@ open class AppContextState (
 }
 
 class AppState (
-    contextState: Context, coroutineScope: CoroutineScope, navController: NavHostController,
-    var navAppController: NavHostController, val apiState: ApiRoutes,
+    contextState: Context,
+    coroutineScope: CoroutineScope,
+    navController: NavHostController,
+    val apiState: ApiRoutes,
 ) : AppContextState(contextState, coroutineScope, navController) {
     fun getCurrentUser(): UserInfoModel? {
         val userRaw = contextState
@@ -161,10 +163,9 @@ fun rememberAppState(
     contextState: Context = LocalContext.current.applicationContext,
     coroutineScope: CoroutineScope = rememberCoroutineScope(),
     navController: NavHostController = rememberNavController(),
-    navAppController: NavHostController = rememberNavController(),
     apiState: ApiRoutes = rememberApiState(),
-) = remember(contextState, coroutineScope, navController, navAppController, apiState) {
-    AppState(contextState, coroutineScope, navController, navAppController, apiState)
+) = remember(contextState, coroutineScope, navController, apiState) {
+    AppState(contextState, coroutineScope, navController, apiState)
 }
 
 @Composable
