@@ -29,11 +29,12 @@ import kotlinx.coroutines.launch
 import me.naoti.panelapp.R
 import me.naoti.panelapp.network.models.DefaultEmptyProject
 import me.naoti.panelapp.network.models.ProjectInfoModel
+import me.naoti.panelapp.network.models.StatusProject
 import me.naoti.panelapp.state.AppState
 import me.naoti.panelapp.ui.components.EpisodeCard
 import me.naoti.panelapp.ui.components.ProjectCardInfo
-import me.naoti.panelapp.ui.theme.*
 import me.naoti.panelapp.utils.getLogger
+import java.lang.IndexOutOfBoundsException
 
 suspend fun getProjectInformation(projectId: String, appState: AppState, forceRefresh: Boolean = false): ProjectInfoModel? {
     val log = getLogger("ProjectInfoFetch[$projectId]")
@@ -72,6 +73,7 @@ suspend fun getProjectInformation(projectId: String, appState: AppState, forceRe
 @Composable
 fun ProjectScreen(appState: AppState, projectId: String?, clickSource: String) {
     val log = getLogger("ProjectInfoView")
+    log.i("Got from $clickSource")
     if (projectId == null) {
         log.info("Project url is null or missing, using temp view")
         Column(
@@ -86,13 +88,18 @@ fun ProjectScreen(appState: AppState, projectId: String?, clickSource: String) {
 
     var projectInfo by remember { mutableStateOf<ProjectInfoModel?>(null) }
     val swipeState = rememberSwipeRefreshState(false)
+    val mutableStatuses = remember { mutableStateListOf<StatusProject>() }
     var loadingState by remember { mutableStateOf(false) }
 
     LaunchedEffect(key1 = true) {
         appState.coroutineScope.launch {
             // request to API for project information
             loadingState = true
-            projectInfo = getProjectInformation(projectId, appState)
+            val projectData = getProjectInformation(projectId, appState)
+            projectData?.statuses?.forEach { status ->
+                mutableStatuses.add(status)
+            }
+            projectInfo = projectData
             loadingState = false
         }
     }
@@ -139,6 +146,17 @@ fun ProjectScreen(appState: AppState, projectId: String?, clickSource: String) {
                     val newProject = getProjectInformation(projectId, appState, forceRefresh = true)
                     loadingState = false
                     if (newProject != null) {
+                        // replace or add
+                        newProject.statuses.forEach { statusProject ->
+                            val epIndex = mutableStatuses.indexOfFirst { innerStat ->
+                                innerStat.episode == statusProject.episode
+                            }
+                            if (epIndex != -1 && mutableStatuses[epIndex].notSame(statusProject)) {
+                                mutableStatuses[epIndex] = statusProject
+                            } else {
+                                mutableStatuses.add(statusProject)
+                            }
+                        }
                         projectInfo = newProject
                     } else {
                         Toast.makeText(appState.contextState, "Failed to update!", Toast.LENGTH_SHORT).show()
@@ -178,21 +196,35 @@ fun ProjectScreen(appState: AppState, projectId: String?, clickSource: String) {
             ) {
                 projectInfo?.let { project ->
                     Spacer(modifier = Modifier.height(4.dp))
-                    ProjectCardInfo(project, appState, clickSource)
+                    ProjectCardInfo(project, appState)
 
                     Spacer(modifier = Modifier.height(10.dp))
-                    project.statuses.forEach { status ->
+                    mutableStatuses.forEach { status ->
                         EpisodeCard(
                             projectId = project.id,
                             status = status,
                             appState = appState,
                             onStateEdited = { stat ->
-                                project.statuses.forEachIndexed { index, statusProject ->
+                                mutableStatuses.forEachIndexed { index, statusProject ->
                                     statusProject.takeIf { it.episode == stat.episode }?.let {
-                                        project.statuses[index] = it.copy(
+                                        mutableStatuses[index] = it.copy(
                                             progress = stat.progress
                                         )
                                     }
+                                }
+                            },
+                            onRemove = { deleteStatus ->
+                                log.i("Searching episode from status set")
+                                val itemIdx = mutableStatuses.indexOfFirst { statusProject ->
+                                    deleteStatus.episode == statusProject.episode
+                                }
+                                if (itemIdx != -1) {
+                                    try {
+                                        log.i("Found, removing episode from actual project episode set")
+                                        mutableStatuses.removeAt(itemIdx)
+                                    } catch (e: IndexOutOfBoundsException) {/* ignore */}
+                                } else {
+                                    log.w("not found, huh what?")
                                 }
                             }
                         )

@@ -44,13 +44,29 @@ data class ProjectEpisodeChangeAdjustModel(
 data class ProjectEpisodeRemoveModel(
     val changes: ProjectEpisodeChangeAdjustModel,
     val event: String = "remove",
-)
+) {
+    companion object {
+        fun create(animeId: String, episodes: List<Int>): ProjectEpisodeRemoveModel {
+            return ProjectEpisodeRemoveModel(
+                changes = ProjectEpisodeChangeAdjustModel(episodes, animeId)
+            )
+        }
+    }
+}
 
 @JsonClass(generateAdapter = true)
 data class ProjectEpisodeAddModel(
     val changes: ProjectEpisodeChangeAdjustModel,
     val event: String = "add",
-)
+) {
+    companion object {
+        fun create(animeId: String, episodes: List<Int>): ProjectEpisodeAddModel {
+            return ProjectEpisodeAddModel(
+                changes = ProjectEpisodeChangeAdjustModel(episodes, animeId)
+            )
+        }
+    }
+}
 
 @JsonClass(generateAdapter = true)
 data class ProjectEpisodeRemovedResponse(

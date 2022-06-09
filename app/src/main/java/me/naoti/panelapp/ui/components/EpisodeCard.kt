@@ -322,7 +322,13 @@ fun EpisodeCardView(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EpisodeCard(projectId: String, status: StatusProject, appState: AppState, onStateEdited: (StatusProject) -> Unit) {
+fun EpisodeCard(
+    projectId: String,
+    status: StatusProject,
+    appState: AppState,
+    onStateEdited: (StatusProject) -> Unit,
+    onRemove: (StatusProject) -> Unit
+) {
     val log = getLogger("EpisodeCard")
     var isSubmitting by remember {
         mutableStateOf(false)
@@ -495,9 +501,11 @@ fun EpisodeCard(projectId: String, status: StatusProject, appState: AppState, on
                         onClick = {
                             if (!isSubmitting) {
                                 log.i("Showing alert dialog...")
+                                dialogDelete = true
                             }
                         },
                         modifier = Modifier.size(24.dp),
+                        enabled = !isSubmitting
                     ) {
                         Icon(
                             imageVector = Icons.Filled.Delete,
@@ -595,5 +603,58 @@ fun EpisodeCard(projectId: String, status: StatusProject, appState: AppState, on
                 Text(text = if (isReleased) "Undo Release" else "Release")
             }
         }
+    }
+
+    if (dialogDelete) {
+        DeleteDialog(
+            extraText = "This will remove episode ${status.episode}",
+            onDismiss = {
+                if (!isSubmitting) {
+                    dialogDelete = false
+                }
+            },
+            onConfirm = {
+                isSubmitting = true
+                appState.coroutineScope.launch {
+                    log.i("Removing epsideo from database...")
+                    val removeThis = ProjectEpisodeRemoveModel.create(projectId, listOf(status.episode))
+                    when (val result = appState.apiState.removeProjectEpisode(removeThis)) {
+                        is NetworkResponse.Success -> {
+                            if (result.body.success == true) {
+                                log.i("Success, sending callback")
+                                dialogDelete = false
+                                isSubmitting = false
+                                onRemove(status)
+                            } else {
+                                val errMsg = result.body.code?.asText() ?: ErrorCode.UnknownError.asText()
+                                Toast.makeText(
+                                    appState.contextState,
+                                    errMsg,
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                                dialogDelete = false
+                                isSubmitting = false
+                            }
+                        }
+                        is NetworkResponse.Error -> {
+                            result.error?.let { log.e(it.stackTraceToString()) }
+                            val body = result.body
+                            var errMsg = result.error.toString()
+                            if (body != null) {
+                                errMsg = body.code?.asText() ?: ErrorCode.UnknownError.asText()
+                            }
+                            Toast.makeText(
+                                appState.contextState,
+                                errMsg,
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            dialogDelete = false
+                            isSubmitting = false
+                        }
+                    }
+                }
+            },
+            enabled = !isSubmitting
+        )
     }
 }

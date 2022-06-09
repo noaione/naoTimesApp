@@ -66,7 +66,19 @@ data class StatusProject(
     @Json(name = "is_done")
     var isDone: Boolean,
     var progress: StatusTickProject,
-)
+) {
+    fun same(other: StatusProject): Boolean {
+        if (episode != other.episode) return false
+        if (isDone != other.isDone) return false
+        if (airtime != other.airtime) return false
+        if (!progress.isSame(other.progress)) return false
+        return true
+    }
+
+    fun notSame(other: StatusProject): Boolean {
+        return !same(other)
+    }
+}
 
 data class Project(
     val id: String,

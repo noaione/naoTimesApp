@@ -87,7 +87,7 @@ fun DeleteButtonDarkPreview() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProjectCardInfo(project: ProjectInfoModel, appState: AppState, sourcePage: String) {
+fun ProjectCardInfo(project: ProjectInfoModel, appState: AppState) {
     var openDialog by remember { mutableStateOf(false) }
     var isDeleting by remember { mutableStateOf(false) }
     val log = getLogger("ProjectCardInfo")
@@ -219,6 +219,7 @@ fun ProjectCardInfo(project: ProjectInfoModel, appState: AppState, sourcePage: S
                         }
                         is NetworkResponse.Error -> {
                             // error handle
+                            result.error?.let { log.e(it.stackTraceToString()) }
                             val body = result.body
                             var errMsg = result.error.toString()
                             if (body != null) {
