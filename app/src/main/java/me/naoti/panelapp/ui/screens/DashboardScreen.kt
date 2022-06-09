@@ -34,6 +34,7 @@ import me.naoti.panelapp.network.models.Project
 import me.naoti.panelapp.network.models.StatsKeyValueModel
 import me.naoti.panelapp.state.AppState
 import me.naoti.panelapp.ui.components.DashboardProjectCard
+import me.naoti.panelapp.ui.preferences.UserSettings
 import me.naoti.panelapp.ui.theme.Green500
 import me.naoti.panelapp.ui.theme.White
 import me.naoti.panelapp.ui.theme.Yellow500
@@ -78,7 +79,7 @@ suspend fun getAPIData(appState: AppState): APIResult {
 }
 
 @Composable
-fun DashboardScreen(appState: AppState, forceRefresh: Boolean = false) {
+fun DashboardScreen(appState: AppState, userSettings: UserSettings) {
     val log = getLogger("DashboardScreenVIew")
     var ongoingProject by rememberSaveable { mutableStateOf<List<Project>>(listOf()) }
     val swipeState = rememberSwipeRefreshState(false)
@@ -110,7 +111,7 @@ fun DashboardScreen(appState: AppState, forceRefresh: Boolean = false) {
         }
     }
 
-    if (forceRefresh && isInitialized) {
+    if (userSettings.refresh && isInitialized) {
         LaunchedEffect(key1 = true) {
             appState.coroutineScope.launch {
                 loadingState = true
@@ -128,6 +129,7 @@ fun DashboardScreen(appState: AppState, forceRefresh: Boolean = false) {
                 }
                 log.i("Data forced refreshed!")
                 loadingState = false
+                userSettings.refresh = false
             }
         }
     }

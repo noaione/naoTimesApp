@@ -15,7 +15,6 @@ import me.naoti.panelapp.ui.screens.DashboardScreen
 import me.naoti.panelapp.ui.screens.ProjectsScreen
 import me.naoti.panelapp.ui.screens.SettingsScreen
 import me.naoti.panelapp.utils.getLogger
-import me.naoti.panelapp.utils.mapBoolean
 
 @Composable
 fun NavigationHost(appState: AppState, navController: NavController, paddingValues: PaddingValues, userSettings: UserSettings) {
@@ -30,18 +29,16 @@ fun NavigationHost(appState: AppState, navController: NavController, paddingValu
         composable(
             NavigationItem.Dashboard.route,
             arguments = listOf(navArgument("refresh") {defaultValue = "false"})
-        ) { backStack ->
-            val forceRefresh = mapBoolean(backStack.arguments?.getString("refresh"))
-            log.i("Entering route: ${NavigationItem.Dashboard.route} [refresh=$forceRefresh]")
-            DashboardScreen(appState, forceRefresh)
+        ) {
+            log.i("Entering route: ${NavigationItem.Dashboard.route}")
+            DashboardScreen(appState, userSettings)
         }
         composable(
             NavigationItem.Projects.route,
             arguments = listOf(navArgument("refresh") {defaultValue = "false"})
-        ) { backStack ->
-            val forceRefresh = mapBoolean(backStack.arguments?.getString("refresh"))
-            log.i("Entering route: ${NavigationItem.Projects.route} [refresh=$forceRefresh]")
-            ProjectsScreen(appState)
+        ) {
+            log.i("Entering route: ${NavigationItem.Projects.route}")
+            ProjectsScreen(appState, userSettings)
         }
         composable(NavigationItem.Settings.route) {
             log.i("Entering route: ${NavigationItem.Settings.route}")

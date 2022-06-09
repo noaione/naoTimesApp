@@ -44,6 +44,7 @@ import me.naoti.panelapp.ui.components.NetworkSearch
 import me.naoti.panelapp.ui.components.SearchDebouncer
 import me.naoti.panelapp.ui.components.StatusRole
 import me.naoti.panelapp.ui.popUpToTop
+import me.naoti.panelapp.ui.preferences.UserSettings
 import me.naoti.panelapp.ui.theme.Green500
 import me.naoti.panelapp.ui.theme.darker
 import me.naoti.panelapp.utils.getLogger
@@ -137,7 +138,7 @@ private fun validateEverything(project: AnimeMatchModel?, episodeCount: String):
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProjectAddScreen(appState: AppState) {
+fun ProjectAddScreen(appState: AppState, userSettings: UserSettings) {
     val log = getLogger("ProjectAddViewScreen")
     var selectedAnime by remember { mutableStateOf<AnimeMatchModel?>(null) }
 
@@ -511,6 +512,7 @@ fun ProjectAddScreen(appState: AppState) {
                                     val navRoute = ScreenItem.ProjectScreen.route.replace(
                                         "{projectId}", selectedAnime!!.id.toString()
                                     )
+                                    userSettings.refresh = true
                                     appState.navController.navigate(navRoute) {
                                         val navTarget = appState.navController.currentDestination
                                         if (navTarget != null) {

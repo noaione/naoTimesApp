@@ -84,12 +84,17 @@ fun NaoTimesView(appState: AppState, userSettings: UserSettings) {
                 )
             ) { stack ->
                 val clickSource = stack.arguments?.getString("source") ?: "dashboard"
-                ProjectScreen(appState, stack.arguments?.getString("projectId"), clickSource.lowercase())
+                ProjectScreen(
+                    appState,
+                    stack.arguments?.getString("projectId"),
+                    clickSource.lowercase(),
+                    userSettings,
+                )
             }
             composable(
                 ScreenItem.ProjectAddScreen.route,
             ) {
-                ProjectAddScreen(appState)
+                ProjectAddScreen(appState, userSettings)
             }
         }
     }

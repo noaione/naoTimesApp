@@ -40,6 +40,7 @@ import me.naoti.panelapp.network.models.StatusProject
 import me.naoti.panelapp.state.AppState
 import me.naoti.panelapp.ui.components.EpisodeCard
 import me.naoti.panelapp.ui.components.ProjectCardInfo
+import me.naoti.panelapp.ui.preferences.UserSettings
 import me.naoti.panelapp.ui.theme.darker
 import me.naoti.panelapp.utils.getLogger
 
@@ -78,7 +79,7 @@ suspend fun getProjectInformation(projectId: String, appState: AppState, forceRe
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProjectScreen(appState: AppState, projectId: String?, clickSource: String) {
+fun ProjectScreen(appState: AppState, projectId: String?, clickSource: String, userSettings: UserSettings) {
     val log = getLogger("ProjectInfoView")
     log.i("Got from $clickSource")
     if (projectId == null) {
@@ -230,7 +231,7 @@ fun ProjectScreen(appState: AppState, projectId: String?, clickSource: String) {
             ) {
                 projectInfo?.let { project ->
                     Spacer(modifier = Modifier.height(4.dp))
-                    ProjectCardInfo(project, appState)
+                    ProjectCardInfo(project, appState, userSettings)
 
                     Spacer(modifier = Modifier.height(10.dp))
                     mutableStatuses.forEach { status ->

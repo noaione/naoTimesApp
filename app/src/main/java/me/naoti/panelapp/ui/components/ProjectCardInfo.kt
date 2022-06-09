@@ -23,6 +23,7 @@ import me.naoti.panelapp.network.ErrorCode
 import me.naoti.panelapp.network.models.ProjectInfoModel
 import me.naoti.panelapp.network.models.ProjectRemoveModel
 import me.naoti.panelapp.state.AppState
+import me.naoti.panelapp.ui.preferences.UserSettings
 import me.naoti.panelapp.ui.theme.Red600
 import me.naoti.panelapp.ui.theme.White
 import me.naoti.panelapp.utils.getLogger
@@ -82,7 +83,7 @@ fun DeleteButtonDarkPreview() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProjectCardInfo(project: ProjectInfoModel, appState: AppState) {
+fun ProjectCardInfo(project: ProjectInfoModel, appState: AppState, userSettings: UserSettings) {
     var openDialog by remember { mutableStateOf(false) }
     var isDeleting by remember { mutableStateOf(false) }
     val log = getLogger("ProjectCardInfo")
@@ -197,6 +198,7 @@ fun ProjectCardInfo(project: ProjectInfoModel, appState: AppState) {
                             if (result.body.success) {
                                 log.i("Success, moving main controller to scaffold route")
                                 // just use the back button or pop state?
+                                userSettings.refresh = true
                                 appState.navController.popBackStack()
                             } else {
                                 val errMsg = when (val code = result.body.code) {

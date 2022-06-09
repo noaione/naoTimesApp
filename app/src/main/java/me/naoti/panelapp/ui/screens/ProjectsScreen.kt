@@ -21,6 +21,7 @@ import kotlinx.coroutines.launch
 import me.naoti.panelapp.network.models.ProjectListModel
 import me.naoti.panelapp.state.AppState
 import me.naoti.panelapp.ui.components.ProjectCard
+import me.naoti.panelapp.ui.preferences.UserSettings
 import me.naoti.panelapp.utils.getLogger
 
 suspend fun getProjects(appState: AppState): List<ProjectListModel> {
@@ -45,7 +46,7 @@ suspend fun getProjects(appState: AppState): List<ProjectListModel> {
 }
 
 @Composable
-fun ProjectsScreen(appState: AppState, forceRefresh: Boolean = false) {
+fun ProjectsScreen(appState: AppState, userSettings: UserSettings) {
     val log = getLogger("ProjectsView")
 
     var projectsList by rememberSaveable { mutableStateOf<List<ProjectListModel>>(listOf()) }
@@ -65,7 +66,7 @@ fun ProjectsScreen(appState: AppState, forceRefresh: Boolean = false) {
         }
     }
 
-    if (forceRefresh && isInit) {
+    if (userSettings.refresh && isInit) {
         LaunchedEffect(key1 = true) {
             appState.coroutineScope.launch {
                 loadingState = true
@@ -73,6 +74,7 @@ fun ProjectsScreen(appState: AppState, forceRefresh: Boolean = false) {
                 projectsList = getProjects(appState)
                 log.i("Data forced refreshed!")
                 loadingState = false
+                userSettings.refresh = false
             }
         }
     }

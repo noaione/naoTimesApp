@@ -31,4 +31,6 @@ enum class DarkModeOverride(val mode: Int) {
 interface UserSettings {
     val themeStream: StateFlow<DarkModeOverride>
     var theme: DarkModeOverride
+    val refreshStream: StateFlow<Boolean>
+    var refresh: Boolean
 }
