@@ -238,9 +238,9 @@ fun SettingsScreen(appState: AppState, userSettings: UserSettings) {
         }
 
         Spacer(modifier = Modifier.height(8.dp))
-        TextHead(text = "Servers")
+        TextHead(text = "Server")
         BoxedSettings {
-            Text(text = "Announce Channel", fontWeight = FontWeight.SemiBold, fontSize = 16.sp, letterSpacing = 0.sp)
+            Text(text = "Announcement Channel", fontWeight = FontWeight.SemiBold, fontSize = 16.sp, letterSpacing = 0.sp)
             Text(text = userInfo.announceChannel ?: "Not Set", fontSize = 13.sp, letterSpacing = 0.sp)
         }
 
