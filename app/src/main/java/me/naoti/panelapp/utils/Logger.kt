@@ -45,7 +45,7 @@ class Logger(
             if (!Tag.contains(".")) {
                 actualTag = "naoTimes.$actualTag"
             }
-            return Logger(Tag)
+            return Logger(actualTag)
         }
     }
 }
