@@ -60,15 +60,15 @@ interface ApiRoutes {
     @GET("showtimes/settings")
     suspend fun getRemoteConfig(): ErrorModelWithData<SettingsModel>
     @GET("fsrss/channelfind")
-    suspend fun getServerChannels(): SettingsChannelFindModel
+    suspend fun getServerChannels(): NetworkResponse<SettingsChannelFindModel, SettingsChannelFindModel>
     @POST("showtimes/settings/admin")
-    suspend fun updateAdmins(@Body admins: SettingsAdjustAdmin): ErrorModel
+    suspend fun updateAdmins(@Body admins: SettingsAdjustAdmin): NetworkResponse<ErrorModel, ErrorModel>
     @POST("showtimes/settings/announcer")
-    suspend fun updateAnnoucer(@Body announcer: SettingsAdjustAnnouncer): ErrorModel
+    suspend fun updateAnnoucer(@Body announcer: SettingsAdjustAnnouncer): NetworkResponse<ErrorModel, ErrorModel>
     @POST("showtimes/settings/name")
-    suspend fun updateName(@Body name: SettingsAdjustName): AuthModel
+    suspend fun updateName(@Body name: SettingsAdjustName): NetworkResponse<ErrorModel, ErrorModel>
     @POST("auth/reset")
-    suspend fun updatePassword(@Body password: SettingsAdjustPassword): ErrorModel
+    suspend fun updatePassword(@Body password: SettingsAdjustPassword): NetworkResponse<ErrorModel, ErrorModel>
 }
 
 class ApiService {

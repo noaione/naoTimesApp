@@ -3,6 +3,7 @@ package me.naoti.panelapp.network.models
 import androidx.annotation.Nullable
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
+import me.naoti.panelapp.network.ErrorCode
 
 data class SettingsAdjustAdmin(
     val adminIds: List<String>
@@ -34,7 +35,8 @@ data class ChannelFindResult(
 
 data class SettingsChannelFindModel(
     val results: List<ChannelFindResult>,
-    val success: Boolean
+    val success: Boolean,
+    val code: ErrorCode
 )
 
 data class SettingsModel(
