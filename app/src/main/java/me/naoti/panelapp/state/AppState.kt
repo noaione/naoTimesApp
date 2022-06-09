@@ -16,19 +16,8 @@ import me.naoti.panelapp.network.models.UserInfoModel
 import io.github.reactivecircus.cache4k.Cache
 import me.naoti.panelapp.network.CookieSenderInterceptor
 import me.naoti.panelapp.network.models.ProjectInfoModel
+import me.naoti.panelapp.ui.preferences.DarkModeOverride
 import kotlin.time.Duration.Companion.minutes
-
-enum class DarkModeOverride(val mode: Int) {
-    FollowSystem(-1),
-    LightMode(0),
-    DarkMode(1);
-
-    companion object {
-        fun fromInt(value: Int): DarkModeOverride? {
-            return values().firstOrNull { value == it.mode }
-        }
-    }
-}
 
 open class AppContextState (
     val contextState: Context,
@@ -66,7 +55,7 @@ open class AppContextState (
                 contextState.getString(R.string.app_name),
                 Context.MODE_PRIVATE
             )
-            .getInt(DARK_MODE_CONTEXT, 0)
+            .getInt(DARK_MODE_CONTEXT, -1)
 
         val darkOverride = DarkModeOverride.fromInt(darkPrefs) ?: DarkModeOverride.FollowSystem
 

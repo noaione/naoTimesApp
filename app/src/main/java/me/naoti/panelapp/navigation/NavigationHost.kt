@@ -8,12 +8,13 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import me.naoti.panelapp.state.AppState
+import me.naoti.panelapp.ui.preferences.UserSettings
 import me.naoti.panelapp.ui.screens.*
 import me.naoti.panelapp.utils.getLogger
 import me.naoti.panelapp.utils.mapBoolean
 
 @Composable
-fun NavigationHost(appState: AppState, paddingValues: PaddingValues) {
+fun NavigationHost(appState: AppState, paddingValues: PaddingValues, userSettings: UserSettings) {
     val log = getLogger("NavigationMain")
     log.i("Creating navigation host")
     NavHost(
@@ -40,7 +41,7 @@ fun NavigationHost(appState: AppState, paddingValues: PaddingValues) {
         }
         composable(NavigationItem.Settings.route) {
             log.i("Entering route: ${NavigationItem.Settings.route}")
-            SettingsScreen(appState)
+            SettingsScreen(appState, userSettings)
         }
     }
 }

@@ -15,6 +15,7 @@ import me.naoti.panelapp.navigation.NavigationHost
 import me.naoti.panelapp.state.AppState
 import me.naoti.panelapp.ui.components.BottomNavigationBar
 import me.naoti.panelapp.ui.components.TopBar
+import me.naoti.panelapp.ui.preferences.UserSettings
 import me.naoti.panelapp.utils.getLogger
 
 @Composable
@@ -39,7 +40,7 @@ fun ProjectAddButton(navController: NavController) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AppScaffold(appState: AppState) {
+fun AppScaffold(appState: AppState, userSettings: UserSettings) {
     Scaffold(
         topBar = {
             TopBar()
@@ -51,6 +52,6 @@ fun AppScaffold(appState: AppState) {
             ProjectAddButton(appState.navController)
         }
     ) { padVal ->
-        NavigationHost(appState, padVal)
+        NavigationHost(appState, padVal, userSettings)
     }
 }

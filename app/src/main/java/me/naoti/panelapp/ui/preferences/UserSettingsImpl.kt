@@ -1,0 +1,47 @@
+/**
+ * Original code by stefanosansone
+ * https://github.com/stefanosansone/compose-theme-switcher
+ * https://github.com/stefanosansone/compose-theme-switcher/blob/main/app/src/main/java/com/salsbyte/composetheme/preferences/UserSettingsImpl.kt
+ */
+package me.naoti.panelapp.ui.preferences
+
+import android.content.Context
+import android.content.SharedPreferences
+import androidx.core.content.edit
+import kotlinx.coroutines.flow.MutableStateFlow
+import me.naoti.panelapp.R
+import kotlin.properties.ReadWriteProperty
+import kotlin.reflect.KProperty
+
+class UserSettingsImpl(
+    context: Context
+) : UserSettings {
+
+    override val themeStream: MutableStateFlow<DarkModeOverride>
+    override var theme: DarkModeOverride by AppThemePreferenceDelegate(
+        "naotimes_dark_mode_override", DarkModeOverride.FollowSystem
+    )
+
+    private val preferences: SharedPreferences =
+        context.getSharedPreferences(context.getString(R.string.app_name), Context.MODE_PRIVATE)
+
+    init {
+        themeStream = MutableStateFlow(theme)
+    }
+
+    inner class AppThemePreferenceDelegate(
+        private val name: String,
+        private val default: DarkModeOverride,
+    ) : ReadWriteProperty<Any?, DarkModeOverride> {
+
+        override fun getValue(thisRef: Any?, property: KProperty<*>): DarkModeOverride =
+            DarkModeOverride.fromInt(preferences.getInt(name, default.mode)) ?: default
+
+        override fun setValue(thisRef: Any?, property: KProperty<*>, value: DarkModeOverride) {
+            themeStream.value = value
+            preferences.edit {
+                putInt(name, value.mode)
+            }
+        }
+    }
+}
