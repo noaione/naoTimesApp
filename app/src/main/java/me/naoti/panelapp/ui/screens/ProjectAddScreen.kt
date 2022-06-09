@@ -97,9 +97,12 @@ fun AnilistSearchBar(
                     .fillMaxWidth()
                     .padding(4.dp)
             ) {
-                Text(text = it.content.asResult(), modifier = Modifier
-                    .padding(4.dp)
-                    .wrapContentWidth(Alignment.Start))
+                Text(
+                    text = it.content.asResult(),
+                    modifier = Modifier
+                        .padding(4.dp)
+                        .wrapContentWidth(Alignment.Start)
+                )
             }
         },
         searchDebouncer = AnilistDebouncerManager(appState.contextState, appState.coroutineScope),
