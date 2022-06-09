@@ -1,5 +1,8 @@
 package me.naoti.panelapp.utils
 
+import kotlin.random.Random
+import kotlin.random.nextInt
+
 val WordBank = listOf<String>(
     "delicate",
     "obsequious",
@@ -503,11 +506,15 @@ val WordBank = listOf<String>(
     "handle",
 )
 
+private fun actuallyPickWord(): String {
+    return WordBank[Random.nextInt(from = 0, until = WordBank.size)]
+}
+
 fun pickWords(count: Int = 3): List<String> {
     val pickedWord = mutableListOf<String>()
     var totalCount = count
     while (totalCount > 0) {
-        val pickThis = WordBank.random()
+        val pickThis = actuallyPickWord()
         if (!pickedWord.contains(pickThis)) {
             pickedWord.add(pickThis)
             totalCount--
