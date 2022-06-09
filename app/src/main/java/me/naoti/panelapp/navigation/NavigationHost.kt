@@ -17,7 +17,13 @@ import me.naoti.panelapp.ui.screens.SettingsScreen
 import me.naoti.panelapp.utils.getLogger
 
 @Composable
-fun NavigationHost(appState: AppState, navController: NavController, paddingValues: PaddingValues, userSettings: UserSettings) {
+fun NavigationHost(
+    appState: AppState,
+    navController: NavController,
+    paddingValues: PaddingValues,
+    userSettings: UserSettings,
+    onRouteChange: (String) -> Unit,
+) {
     val log = getLogger("NavigationMain")
     log.i("Creating navigation host")
     NavHost(
@@ -31,6 +37,7 @@ fun NavigationHost(appState: AppState, navController: NavController, paddingValu
             arguments = listOf(navArgument("refresh") {defaultValue = "false"})
         ) {
             log.i("Entering route: ${NavigationItem.Dashboard.route}")
+            onRouteChange(NavigationItem.Dashboard.route)
             DashboardScreen(appState, userSettings)
         }
         composable(
@@ -38,10 +45,12 @@ fun NavigationHost(appState: AppState, navController: NavController, paddingValu
             arguments = listOf(navArgument("refresh") {defaultValue = "false"})
         ) {
             log.i("Entering route: ${NavigationItem.Projects.route}")
+            onRouteChange(NavigationItem.Projects.route)
             ProjectsScreen(appState, userSettings)
         }
         composable(NavigationItem.Settings.route) {
             log.i("Entering route: ${NavigationItem.Settings.route}")
+            onRouteChange(NavigationItem.Settings.route)
             SettingsScreen(appState, userSettings)
         }
     }
