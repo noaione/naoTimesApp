@@ -7,10 +7,12 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -36,7 +38,12 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun NaoTimesView(appState: AppState) {
-    NaoTimesTheme {
+    val darkMode by rememberSaveable {
+        mutableStateOf(appState.isDarkMode())
+    }
+    NaoTimesTheme(
+        darkTheme = darkMode
+    ) {
         Surface(
             modifier = Modifier
                 .fillMaxWidth()
