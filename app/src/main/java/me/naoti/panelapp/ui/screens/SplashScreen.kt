@@ -1,7 +1,6 @@
 package me.naoti.panelapp.ui.screens
 
 import androidx.compose.animation.AnimatedVisibility
-import me.naoti.panelapp.R
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -18,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import com.haroldadmin.cnradapter.NetworkResponse
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import me.naoti.panelapp.R
 import me.naoti.panelapp.state.AppState
 import me.naoti.panelapp.ui.ScreenItem
 import me.naoti.panelapp.ui.components.naoTimesText

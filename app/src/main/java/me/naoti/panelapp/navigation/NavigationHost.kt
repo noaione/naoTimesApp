@@ -11,7 +11,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import me.naoti.panelapp.state.AppState
 import me.naoti.panelapp.ui.preferences.UserSettings
-import me.naoti.panelapp.ui.screens.*
+import me.naoti.panelapp.ui.screens.DashboardScreen
+import me.naoti.panelapp.ui.screens.ProjectsScreen
+import me.naoti.panelapp.ui.screens.SettingsScreen
 import me.naoti.panelapp.utils.getLogger
 import me.naoti.panelapp.utils.mapBoolean
 

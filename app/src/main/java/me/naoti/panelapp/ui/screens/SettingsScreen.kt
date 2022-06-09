@@ -32,7 +32,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
-import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.haroldadmin.cnradapter.NetworkResponse
@@ -46,13 +45,14 @@ import me.naoti.panelapp.network.models.SettingsAdjustName
 import me.naoti.panelapp.network.models.SettingsAdjustPassword
 import me.naoti.panelapp.network.models.UserInfoModel
 import me.naoti.panelapp.state.AppState
-import me.naoti.panelapp.ui.preferences.DarkModeOverride
 import me.naoti.panelapp.ui.ScreenItem
 import me.naoti.panelapp.ui.popUpToTop
+import me.naoti.panelapp.ui.preferences.DarkModeOverride
 import me.naoti.panelapp.ui.preferences.UserSettings
 import me.naoti.panelapp.ui.theme.NaoTimesTheme
 import me.naoti.panelapp.ui.theme.darker
 import me.naoti.panelapp.utils.getLogger
+import me.naoti.panelapp.utils.hasUppercase
 
 @Composable
 fun LogoutButton(appState: AppState, modifier: Modifier = Modifier, dryRun: Boolean = false) {
@@ -711,12 +711,4 @@ fun SettingsScreen(appState: AppState, userSettings: UserSettings) {
             LogoutButton(appState, modifier = Modifier.padding(4.dp))
         }
     }
-}
-
-fun String.hasUppercase(needed: Int = 1): Boolean {
-    var count = 0
-    this.toCharArray().forEach { char ->
-        if (char.isUpperCase()) count++
-    }
-    return count >= needed
 }

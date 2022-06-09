@@ -1,6 +1,5 @@
 package me.naoti.panelapp.network.models
 
-import androidx.annotation.Nullable
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 

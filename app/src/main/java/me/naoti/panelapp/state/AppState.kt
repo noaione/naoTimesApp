@@ -8,14 +8,14 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import io.github.reactivecircus.cache4k.Cache
 import kotlinx.coroutines.CoroutineScope
 import me.naoti.panelapp.R
 import me.naoti.panelapp.builder.getMoshi
 import me.naoti.panelapp.network.ApiRoutes
-import me.naoti.panelapp.network.models.UserInfoModel
-import io.github.reactivecircus.cache4k.Cache
 import me.naoti.panelapp.network.CookieSenderInterceptor
 import me.naoti.panelapp.network.models.ProjectInfoModel
+import me.naoti.panelapp.network.models.UserInfoModel
 import me.naoti.panelapp.ui.preferences.DarkModeOverride
 import kotlin.time.Duration.Companion.minutes
 

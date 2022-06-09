@@ -7,13 +7,13 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Icon
-import androidx.compose.material3.LinearProgressIndicator
-import androidx.compose.material3.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material3.Icon
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
@@ -34,7 +34,10 @@ import me.naoti.panelapp.network.models.Project
 import me.naoti.panelapp.network.models.StatsKeyValueModel
 import me.naoti.panelapp.state.AppState
 import me.naoti.panelapp.ui.components.DashboardProjectCard
-import me.naoti.panelapp.ui.theme.*
+import me.naoti.panelapp.ui.theme.Green500
+import me.naoti.panelapp.ui.theme.White
+import me.naoti.panelapp.ui.theme.Yellow500
+import me.naoti.panelapp.ui.theme.lighter
 import me.naoti.panelapp.utils.getLogger
 
 data class APIResult(

@@ -18,7 +18,7 @@ import me.naoti.panelapp.network.models.*
 import me.naoti.panelapp.state.AppContextState
 import me.naoti.panelapp.state.rememberAppContextState
 import me.naoti.panelapp.ui.ScreenItem
-import me.naoti.panelapp.ui.theme.*
+import me.naoti.panelapp.ui.theme.NaoTimesTheme
 import me.naoti.panelapp.utils.getLogger
 
 fun waitForRelease(progress: StatusTickProject): Boolean {

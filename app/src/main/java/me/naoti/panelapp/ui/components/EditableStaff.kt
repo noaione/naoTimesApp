@@ -7,14 +7,11 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -31,7 +28,7 @@ import me.naoti.panelapp.network.models.AssignmentKeyValueProject
 import me.naoti.panelapp.network.models.ProjectAdjustStaffModel
 import me.naoti.panelapp.network.models.ProjectUpdateContentStaff
 import me.naoti.panelapp.state.AppState
-import me.naoti.panelapp.ui.theme.*
+import me.naoti.panelapp.ui.theme.darker
 import me.naoti.panelapp.utils.getLogger
 
 @Composable

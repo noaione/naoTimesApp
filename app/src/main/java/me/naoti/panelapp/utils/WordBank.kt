@@ -1,7 +1,6 @@
 package me.naoti.panelapp.utils
 
 import kotlin.random.Random
-import kotlin.random.nextInt
 
 val WordBank = listOf<String>(
     "delicate",

@@ -10,7 +10,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import me.naoti.panelapp.navigation.NavigationItem
-import me.naoti.panelapp.ui.theme.*
+import me.naoti.panelapp.ui.theme.NaoTimesTheme
 import me.naoti.panelapp.utils.getLogger
 
 

@@ -13,8 +13,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -65,8 +63,8 @@ fun <T> NetworkSearch(
     itemContent: @Composable (T) -> Unit,
     searchDebouncer: SearchDebouncer<T>,
     onItemSelected: (T) -> Unit,
-    onCleared: (() -> Unit)? = null,
     modifier: Modifier = Modifier,
+    onCleared: (() -> Unit)? = null,
     enabled: Boolean = true,
     isError: Boolean = false,
 ) {

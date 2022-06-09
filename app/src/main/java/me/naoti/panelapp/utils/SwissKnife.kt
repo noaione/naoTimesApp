@@ -17,3 +17,11 @@ fun mapBoolean(text: Any?): Boolean {
         else -> false
     }
 }
+
+fun String.hasUppercase(needed: Int = 1): Boolean {
+    var count = 0
+    this.toCharArray().forEach { char ->
+        if (char.isUpperCase()) count++
+    }
+    return count >= needed
+}

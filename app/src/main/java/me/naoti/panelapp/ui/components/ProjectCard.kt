@@ -16,7 +16,8 @@ import me.naoti.panelapp.builder.CoilImage
 import me.naoti.panelapp.network.models.ProjectListModel
 import me.naoti.panelapp.state.AppState
 import me.naoti.panelapp.ui.ScreenItem
-import me.naoti.panelapp.ui.theme.*
+import me.naoti.panelapp.ui.theme.Green600
+import me.naoti.panelapp.ui.theme.Red600
 import me.naoti.panelapp.utils.getLogger
 
 @OptIn(ExperimentalMaterial3Api::class)

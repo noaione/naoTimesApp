@@ -6,12 +6,9 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
@@ -45,7 +42,6 @@ import me.naoti.panelapp.ui.components.EpisodeCard
 import me.naoti.panelapp.ui.components.ProjectCardInfo
 import me.naoti.panelapp.ui.theme.darker
 import me.naoti.panelapp.utils.getLogger
-import java.lang.IndexOutOfBoundsException
 
 suspend fun getProjectInformation(projectId: String, appState: AppState, forceRefresh: Boolean = false): ProjectInfoModel? {
     val log = getLogger("ProjectInfoFetch[$projectId]")

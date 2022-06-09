@@ -8,12 +8,9 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.runtime.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -26,7 +23,7 @@ import me.naoti.panelapp.ui.preferences.DarkModeOverride
 import me.naoti.panelapp.ui.preferences.UserSettings
 import me.naoti.panelapp.ui.preferences.UserSettingsImpl
 import me.naoti.panelapp.ui.screens.*
-import me.naoti.panelapp.ui.theme.*
+import me.naoti.panelapp.ui.theme.NaoTimesTheme
 
 class MainActivity : ComponentActivity() {
     private lateinit var userSettings: UserSettings
