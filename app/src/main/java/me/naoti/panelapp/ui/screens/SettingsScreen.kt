@@ -351,7 +351,7 @@ fun AnnouncerChangeModule(
                             if (result.body.success) {
                                 log.i("Success, using new announcer state!")
                                 val newUserState = userState.rebuild(
-                                    announceChannel = selectedMatch?.id
+                                    announceChannel = selectedMatch?.id ?: ""
                                 )
                                 userState = newUserState
                                 if (onInfoUpdate != null) {
@@ -885,6 +885,7 @@ fun SettingsScreen(appState: AppState, userSettings: UserSettings) {
             Spacer(modifier = Modifier.height(8.dp))
             TextHead(text = "Server")
             AnnouncerChangeModule(appState = appState, user = userInfo) { newUser ->
+                log.d(newUser)
                 appState.setCurrentUser(newUser)
                 userInfo = newUser
             }

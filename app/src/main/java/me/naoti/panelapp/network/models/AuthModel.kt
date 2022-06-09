@@ -46,7 +46,7 @@ data class UserInfoModel(
             name = actName,
             loggedIn = actLogIn,
             admins = actAdmins,
-            announceChannel = actChannel
+            announceChannel = if (actChannel is String && actChannel.isEmpty()) null else actChannel
         )
     }
 }
