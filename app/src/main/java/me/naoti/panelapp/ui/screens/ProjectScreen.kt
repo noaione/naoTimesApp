@@ -18,6 +18,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.zIndex
 import com.google.accompanist.placeholder.PlaceholderHighlight
 import com.google.accompanist.placeholder.placeholder
 import com.google.accompanist.placeholder.shimmer
@@ -69,7 +70,7 @@ suspend fun getProjectInformation(projectId: String, appState: AppState, forceRe
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProjectScreen(appState: AppState, projectId: String?) {
+fun ProjectScreen(appState: AppState, projectId: String?, clickSource: String) {
     val log = getLogger("ProjectInfoView")
     if (projectId == null) {
         log.info("Project url is null or missing, using temp view")
@@ -154,9 +155,10 @@ fun ProjectScreen(appState: AppState, projectId: String?) {
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(4.dp)
+                        .zIndex(99f)
                 )
             } else {
-                Spacer(modifier = Modifier.height(4.dp))
+                Spacer(modifier = Modifier.height(4.dp).zIndex(99f))
             }
             Column(
                 modifier = Modifier
@@ -176,7 +178,7 @@ fun ProjectScreen(appState: AppState, projectId: String?) {
             ) {
                 projectInfo?.let { project ->
                     Spacer(modifier = Modifier.height(4.dp))
-                    ProjectCardInfo(project, appState)
+                    ProjectCardInfo(project, appState, clickSource)
 
                     Spacer(modifier = Modifier.height(10.dp))
                     project.statuses.forEach { status ->

@@ -22,6 +22,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.zIndex
 import com.google.accompanist.placeholder.PlaceholderHighlight
 import com.google.accompanist.placeholder.placeholder
 import com.google.accompanist.placeholder.shimmer
@@ -101,8 +102,8 @@ fun DashboardScreen(appState: AppState, forceRefresh: Boolean = false) {
                 }
                 log.i("Data initialized!")
                 isInitialized = true
+                loadingState = false
             }
-            loadingState = false
         }
     }
 
@@ -134,9 +135,10 @@ fun DashboardScreen(appState: AppState, forceRefresh: Boolean = false) {
             modifier = Modifier
                 .fillMaxWidth()
                 .height(4.dp)
+                .zIndex(99f)
         )
     } else {
-        Spacer(modifier = Modifier.height(4.dp))
+        Spacer(modifier = Modifier.height(4.dp).zIndex(99f))
     }
     SwipeRefresh(
         state = swipeState,

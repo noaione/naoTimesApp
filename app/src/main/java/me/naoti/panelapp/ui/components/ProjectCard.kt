@@ -52,6 +52,7 @@ fun ProjectCard(project: ProjectListModel, appCtx: AppState) {
                 style = TextStyle(
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onSecondaryContainer
                 ),
                 modifier = Modifier.padding(
                     horizontal = 10.dp,
@@ -60,7 +61,9 @@ fun ProjectCard(project: ProjectListModel, appCtx: AppState) {
                 onClick = {
                     // navigate to project view
                     log.i("Navigating to resource project...")
-                    val navRoute = ScreenItem.ProjectScreen.route.replace("{projectId}", project.id)
+                    val navRoute = ScreenItem.ProjectScreen.route
+                        .replace("{projectId}", project.id)
+                        .replace("{source}", "projects")
                     appCtx.navController.navigate(navRoute)
                 }
             )

@@ -27,6 +27,7 @@ import me.naoti.panelapp.network.ErrorCode
 import me.naoti.panelapp.network.models.ProjectInfoModel
 import me.naoti.panelapp.network.models.ProjectRemoveModel
 import me.naoti.panelapp.state.AppState
+import me.naoti.panelapp.ui.ScreenItem
 import me.naoti.panelapp.ui.popUpToTop
 import me.naoti.panelapp.ui.theme.*
 import me.naoti.panelapp.utils.getLogger
@@ -199,22 +200,9 @@ fun ProjectCardInfo(project: ProjectInfoModel, appState: AppState, sourcePage: S
                     when (val result = appState.apiState.removeProject(ProjectRemoveModel.fromProject(project))) {
                         is NetworkResponse.Success -> {
                             if (result.body.success) {
-                                log.i("Success in deleting project, sending back to dashboard project")
-                                if (sourcePage == "projects") {
-                                    appState.navAppController.navigate(
-                                        NavigationItem.Projects.route.replace("{refresh}", "true")
-                                    ) {
-                                        // remove all stack
-                                        popUpToTop(appState.navAppController)
-                                    }
-                                } else {
-                                    appState.navAppController.navigate(
-                                        NavigationItem.Dashboard.route.replace("{refresh}", "true")
-                                    ) {
-                                        // remove all stack
-                                        popUpToTop(appState.navAppController)
-                                    }
-                                }
+                                log.i("Success, moving main controller to scaffold route")
+                                // just use the back button or pop state?
+                                appState.navController.popBackStack()
                             } else {
                                 val errMsg = when (val code = result.body.code) {
                                     ErrorCode.ProjectNotFound -> code.asText(project.title)

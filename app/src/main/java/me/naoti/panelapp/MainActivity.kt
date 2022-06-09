@@ -10,9 +10,11 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import me.naoti.panelapp.state.AppState
 import me.naoti.panelapp.state.rememberAppState
 import me.naoti.panelapp.ui.AppScaffold
@@ -65,8 +67,12 @@ fun NaoTimesView(appState: AppState) {
                 }
                 composable(
                     ScreenItem.ProjectScreen.route,
+                    arguments = listOf(
+                        navArgument("source") { defaultValue = "dashboard" }
+                    )
                 ) { stack ->
-                    ProjectScreen(appState, stack.arguments?.getString("projectId"))
+                    val clickSource = stack.arguments?.getString("source") ?: "dashboard"
+                    ProjectScreen(appState, stack.arguments?.getString("projectId"), clickSource.lowercase())
                 }
                 composable(
                     ScreenItem.ProjectAddScreen.route,

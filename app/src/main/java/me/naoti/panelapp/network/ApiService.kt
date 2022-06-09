@@ -41,7 +41,7 @@ interface ApiRoutes {
     suspend fun getProject(@Path("id") id: String): NetworkResponse<ErrorModelWithData<ProjectInfoModel>, ErrorModelWithData<ProjectInfoModel>>
     @POST("showtimes/proyek/tambah")
     suspend fun addProject(@Body project: ProjectAddModel): NetworkResponse<ErrorModel, ErrorModel>
-    @DELETE("showtimes/proyek/nuke")
+    @POST("showtimes/proyek/nuke")
     suspend fun removeProject(@Body project: ProjectRemoveModel): NetworkResponse<ErrorModel, ErrorModel>
     @POST("showtimes/proyek/ubah")
     suspend fun updateProjectStatus(@Body project: ProjectAdjustStatusModel): NetworkResponse<ProjectAdjustStatusResponse, ProjectAdjustStatusResponse>

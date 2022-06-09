@@ -67,7 +67,9 @@ fun DashboardProjectCard(project: Project, appCtx: AppContextState = rememberApp
                 onClick = {
                     // navigate to project view
                     log.i("Navigating to resource project...")
-                    val navRoute = ScreenItem.ProjectScreen.route.replace("{projectId}", project.id)
+                    val navRoute = ScreenItem.ProjectScreen.route
+                        .replace("{projectId}", project.id)
+                        .replace("{source}", "dashboard")
                     appCtx.navController.navigate(navRoute)
                 }
             )

@@ -514,7 +514,11 @@ fun ProjectAddScreen(appState: AppState) {
                                     val navRoute = ScreenItem.ProjectScreen.route.replace(
                                         "{projectId}", selectedAnime!!.id.toString()
                                     )
-                                    appState.navController.navigate(navRoute)
+                                    appState.navController.navigate(navRoute) {
+                                        popUpTo(ScreenItem.ProjectScreen.route) {
+                                            inclusive = true
+                                        }
+                                    }
                                 } else {
                                     val body = result.body
                                     val theText = when (body.code) {
