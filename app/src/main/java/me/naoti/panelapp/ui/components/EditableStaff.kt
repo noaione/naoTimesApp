@@ -16,6 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -78,7 +79,7 @@ fun EditableStaff(role: StatusRole, staff: AssignmentKeyValueProject, projectId:
                         bottom = 4.dp,
                         start = 8.dp,
                         end = 8.dp,
-                    ).size(24.dp)
+                    ).size(24.dp).testTag("EditableStaffEditBtn")
                 ) {
                     Icon(
                         Icons.Filled.Edit,
@@ -120,7 +121,7 @@ fun EditableStaff(role: StatusRole, staff: AssignmentKeyValueProject, projectId:
                         bottom = 4.dp,
                         start = 8.dp,
                         end = 8.dp,
-                    ).size(24.dp),
+                    ).size(24.dp).testTag("EditableStaffEditDoneBtn"),
                     enabled = stateEnabled,
                     onClick = {
                         if (stateEnabled) {
@@ -214,6 +215,7 @@ fun EditableStaff(role: StatusRole, staff: AssignmentKeyValueProject, projectId:
                             MaterialTheme.colorScheme.surface,
                             MaterialTheme.shapes.small,
                         )
+                        .testTag("EditableStaffEditBox")
                         .fillMaxWidth()
                         .fillMaxHeight()
                         .clip(Round),
