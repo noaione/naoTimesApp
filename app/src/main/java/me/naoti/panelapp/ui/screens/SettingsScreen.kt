@@ -657,7 +657,7 @@ fun PasswordChangeModule(
             },
             title = {
                 Text(
-                    text = "Name",
+                    text = "Password",
                     fontWeight = FontWeight.SemiBold,
                     letterSpacing = 0.sp,
                     textAlign = TextAlign.Center
