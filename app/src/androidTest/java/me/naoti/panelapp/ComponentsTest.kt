@@ -1,12 +1,15 @@
 package me.naoti.panelapp
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
 import me.naoti.panelapp.network.models.*
 import me.naoti.panelapp.state.rememberAppContextState
 import me.naoti.panelapp.state.rememberAppState
 import me.naoti.panelapp.ui.components.*
+import me.naoti.panelapp.ui.preferences.UserSettingsImpl
 import me.naoti.panelapp.ui.theme.NaoTimesTheme
 import org.junit.Rule
 import org.junit.Test
@@ -256,5 +259,99 @@ class ComponentsTest {
         composeTestRule.onNodeWithText("Finished").assertDoesNotExist()
         composeTestRule.onNode(hasTestTag("EpisodeCardEditBtn")).performClick()
         composeTestRule.onNodeWithText("Finished").assertExists()
+    }
+
+    @Test
+    fun testProjectCardFromProjects() {
+        val projectA = ProjectListModel(
+            id = "123",
+            title = "Sewayaki Kitsune no Senko-san",
+            isDone = false,
+            poster = "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx105914-VXKB0ZA2aVZF.png",
+            assignments = AssignmentProject()
+        )
+        val projectB = ProjectListModel(
+            id = "123",
+            title = "Another Project",
+            isDone = true,
+            poster = "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx105914-VXKB0ZA2aVZF.png",
+            assignments = AssignmentProject()
+        )
+
+        composeTestRule.setContent {
+            NaoTimesTheme {
+                val appCtx = rememberAppState()
+                Column {
+                    ProjectCard(project = projectA, appCtx = appCtx)
+                    ProjectCard(project = projectB, appCtx = appCtx)
+                }
+            }
+        }
+
+        composeTestRule.onNodeWithText("Not finished").assertExists()
+        composeTestRule.onNodeWithText("Finished").assertExists()
+    }
+
+    @Test
+    fun testProjectInfoCard() {
+        val status = StatusProject(
+            airtime = 1555507800,
+            episode = 1,
+            isDone = false,
+            progress = StatusTickProject(
+                translated = true
+            )
+        )
+        val project = ProjectInfoModel(
+            id = "123",
+            malId = null,
+            title = "Test Project",
+            roleId = null,
+            startTime = null,
+            assignments = AssignmentProject(),
+            statuses = mutableListOf(status),
+            poster = ProjectPosterInfoModel("https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx105914-VXKB0ZA2aVZF.png", null),
+            aliases = listOf(),
+            lastUpdate = 123,
+        )
+        composeTestRule.setContent {
+            NaoTimesTheme {
+                val userSettings = UserSettingsImpl(LocalContext.current)
+                ProjectCardInfo(project = project, appState = rememberAppState(), userSettings = userSettings)
+            }
+        }
+
+        // has 7 output
+        composeTestRule.onAllNodesWithText("Unknown").assertCountEquals(7)
+    }
+
+    @Test
+    fun testStatusBox() {
+        composeTestRule.setContent {
+            NaoTimesTheme {
+                Row {
+                    StatusBox(type = StatusRole.TL)
+                    StatusBox(type = StatusRole.TLC)
+                    StatusBox(type = StatusRole.ENC)
+                    StatusBox(type = StatusRole.ED)
+                    StatusBox(type = StatusRole.TS)
+                    StatusBox(type = StatusRole.TM)
+                    StatusBox(type = StatusRole.QC)
+                }
+            }
+        }
+        val progressText = listOf(
+            StatusRole.TL.getShort(),
+            StatusRole.TLC.getShort(),
+            StatusRole.ENC.getShort(),
+            StatusRole.ED.getShort(),
+            StatusRole.TM.getShort(),
+            StatusRole.TS.getShort(),
+            StatusRole.QC.getShort(),
+        )
+        composeTestRule.onAllNodesWithTag("RoleStatusBox").assertCountEquals(7)
+        progressText.forEach { role ->
+            composeTestRule.onNodeWithText(role).assertExists()
+        }
     }
 }
