@@ -135,7 +135,7 @@ fun <T> NetworkSearch(
                     IconButton(onClick = {
                         if (enabled) {
                             value = ""
-                            itemsFound = listOf()
+                            itemsFound = items
                             if (onCleared != null) {
                                 onCleared()
                             }
