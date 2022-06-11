@@ -9,7 +9,6 @@ import android.content.Context
 import android.content.SharedPreferences
 import androidx.core.content.edit
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import me.naoti.panelapp.R
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty

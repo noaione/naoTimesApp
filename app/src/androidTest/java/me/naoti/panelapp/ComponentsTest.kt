@@ -6,7 +6,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
 import me.naoti.panelapp.network.models.*
-import me.naoti.panelapp.state.rememberAppContextState
 import me.naoti.panelapp.state.rememberAppState
 import me.naoti.panelapp.ui.components.*
 import me.naoti.panelapp.ui.preferences.UserSettingsImpl

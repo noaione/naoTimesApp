@@ -3,8 +3,8 @@ package me.naoti.panelapp
 import me.naoti.panelapp.utils.hasUppercase
 import me.naoti.panelapp.utils.mapBoolean
 import me.naoti.panelapp.utils.pickWords
-import org.junit.Test
 import org.junit.Assert.*
+import org.junit.Test
 
 class UtilityUnitTest {
     @Test
